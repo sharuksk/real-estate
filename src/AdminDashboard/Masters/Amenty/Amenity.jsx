@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
-
+import { addAmenityAPI } from '../../../APIServices/mastersAPI/amenityAPI';
 export const Amenity = () => {
   const formik = useFormik({
     initialValues: {
@@ -11,10 +11,14 @@ export const Amenity = () => {
     validationSchema: Yup.object({
       amenityname: Yup.string().required('Amenity Name is Required'),
     }),
-    onSubmit: (values) => {
-      console.log('Submitted values:', values);
-      toast.success('Amenity Added Successfully');
-      formik.resetForm(); 
+    onSubmit: async (values) => {
+  
+        const response = await addAmenityAPI(values);
+       
+          toast.success('Amenity Added Successfully');
+          formik.resetForm(); 
+      
+    
     },
     onReset: () => {
       console.log('Form reset');

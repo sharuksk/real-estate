@@ -8,13 +8,20 @@ withCredentials:true,
     })
     return response?.data;
 }
-export const getAmenityAPI = async () => {
+export const getAmenityAPI = async (page = 10, limit = 3, search = '') => {
     try {
         const response = await axios.get(`${BASE_URL}/master/list-amenity`, {
+            params: { page, limit, search },
             withCredentials: true,
         });
-        return response.data.amenity;
+        return response.data;
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Failed to fetch amenities');
     }
 };
+export const deleteAmenityAPI=async (id)=>{
+    const response=await axios.delete(`${BASE_URL}/master/delete-amenity/${id}`,{
+        withCredentials:true,
+    })
+    return response?.data;
+}

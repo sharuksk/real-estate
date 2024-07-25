@@ -26,12 +26,12 @@ export const Login = () => {
         onSubmit: (values) => {
             const loadingToastId = toast.loading("Logging in...", {
                 style: {
-                    backgroundColor: "#4a90e2", // Tailwind color equivalent
+                    backgroundColor: "#4a90e2", 
                     color: "white",
-                    borderRadius: "0.375rem", // Tailwind's rounded-md
-                    padding: "0.75rem 1.25rem", // Tailwind's py-3 px-5
-                    fontSize: "0.875rem", // Tailwind's text-sm
-                    fontWeight: "bold" // Make the font bold
+                    borderRadius: "0.375rem", 
+                    padding: "0.75rem 1.25rem", 
+                    fontSize: "0.875rem",
+                    fontWeight: "bold" 
                 },
             });
 

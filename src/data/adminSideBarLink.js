@@ -8,5 +8,5 @@ export const sidebarLinks = [
   { id: 5, name: "Properties", path: "/dashboard/properties", icon: VscHome },
   { id: 6, name: "Leads", path: "/dashboard/leads", icon: VscMegaphone },
   { id: 7, name: "Owners", path: "/dashboard/owners", icon: VscPerson },
-  { id: 8, name: "Master", path: "/dashboard/master", icon: VscSettingsGear },
+  { id: 8, name: "Master", path: "/admin-dashboard/masters", icon: VscSettingsGear },
 ];

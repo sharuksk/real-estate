@@ -1,5 +1,4 @@
 import { NavLink, useLocation } from 'react-router-dom';
-
 export default function SidebarLink({ link }) {
   const location = useLocation();
   return (
@@ -14,7 +13,10 @@ export default function SidebarLink({ link }) {
       }`}>
         <link.icon className="text-xl bg-green-200" />
         <span>{link.name}</span>
+       
       </div>
+      
     </NavLink>
+    
   );
 }

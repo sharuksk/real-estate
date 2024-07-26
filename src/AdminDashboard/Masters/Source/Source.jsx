@@ -1,23 +1,22 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { addAmenityAPI } from '../../../APIServices/mastersAPI/amenityAPI';
 import FormComponent from '../../../common/FormComponent';
 import { useQuery } from '@tanstack/react-query';
-export const Amenity = () => {
+import { addSourceAPI } from '../../../APIServices/mastersAPI/sourceAPI';
+export const Source = () => {
   const { isLoading, isError, error, refetch } = useQuery({
     keepPreviousData: true,
     refetchOnWindowFocus: false,
 });
   const initialValues = {
-    amenityname: '',
+    sourcename: '',
   };
-
   const validationSchema = Yup.object({
-    amenityname: Yup.string().required('Amenity Name is Required'),
+    sourcename: Yup.string().required('Source Name is Required'),
   });
 
   const handleSubmit = async (values) => {
-    await addAmenityAPI(values);
+    await addSourceAPI(values);
     refetch();
   };
 
@@ -28,14 +27,14 @@ export const Amenity = () => {
       onSubmit={handleSubmit}
       submitButtonText='Submit'
       resetButtonText='Reset'
-      successMessage='Amenity Added Successfully'
+      successMessage='Source Added Successfully'
       fields={[
         {
-          id: 'amenityname',
-          label: 'Amenity',
+          id: 'name',
+          label: 'Source',
           type: 'text',
-          name: 'amenityname',
-          placeholder: 'Amenity',
+          name: 'sourcename',
+          placeholder: 'Source',
         },
       ]}
     />

@@ -71,7 +71,7 @@ export const PropertyTypeList = () => {
                             <table className='table-auto w-full'>
                                 <thead>
                                     <tr className='text-xs text-gray-500 text-left'>
-                                        <th className="pb-3 text-black font-medium">Amenities</th>
+                                        <th className="pb-3 text-black font-medium">Property Type</th>
                                         <th className="pb-3 text-black font-medium">Created By</th>
                                         <th className="pb-3 text-black font-medium">Actions</th>
                                     </tr>

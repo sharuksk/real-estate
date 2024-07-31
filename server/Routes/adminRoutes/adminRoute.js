@@ -17,9 +17,9 @@ adminRouter.get('/agent/:id',isAuthenticated,adminMiddleware,getAgenttById);
 adminRouter.delete('/remove-agent',isAuthenticated,adminMiddleware,removeAgent)
 //Owner
 adminRouter.post('/add-owner',isAuthenticated,adminMiddleware,createOwner);
-adminRouter.put('/update-owner',isAuthenticated,adminMiddleware,updateOwner);
+adminRouter.put('/update-owner/:id',isAuthenticated,adminMiddleware,updateOwner);
 adminRouter.get('/list-owner',isAuthenticated,adminMiddleware,getAllOwners);
 adminRouter.get('/owner/:id',isAuthenticated,adminMiddleware,getOwnerById);
-adminRouter.delete('/remove-owner',isAuthenticated,adminMiddleware,deleteOwner)
+adminRouter.delete('/delete-owner/:id',isAuthenticated,adminMiddleware,deleteOwner)
 
 module.exports=adminRouter;

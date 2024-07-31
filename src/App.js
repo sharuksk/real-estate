@@ -5,6 +5,11 @@ import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import { Clients } from "./AdminDashboard/Clients/Clients";
 import { Master } from "./AdminDashboard/Masters/Master";
 import { Owners } from "./AdminDashboard/Owners/Owners";
+import { OwnersList } from "./AdminDashboard/Owners/OwnersList";
+import { Lead } from "./AdminDashboard/Lead/Lead";
+import  {UpdateOwner}  from "./AdminDashboard/Owners/UpdateOwners";
+import { LeadList } from "./AdminDashboard/Lead/LeadList";
+import { UpdateLead } from "./AdminDashboard/Lead/UpdateLead";
 
 function App() {
   return (
@@ -14,6 +19,11 @@ function App() {
         <Route path="clients" element={<Clients />} />
         <Route path="masters" element={<Master />} />
         <Route path="owners" element={<Owners />} />
+        <Route path="leads" element={<Lead/>} />
+        <Route path="/admin-dashboard/ownerlist" element={<OwnersList />} />
+        <Route path='/admin-dashboard/update-owner/:id' element={<UpdateOwner/>} />
+        <Route path="/admin-dashboard/leadlist" element={<LeadList/>}/>
+        <Route path="/admin-dashboard/update-lead/:id" element={<UpdateLead/>}/>
         {/* <Route path="dashboard" element={<Das/>} /> */}
       </Route>
     </Routes>

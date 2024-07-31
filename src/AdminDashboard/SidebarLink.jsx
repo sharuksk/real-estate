@@ -9,7 +9,7 @@ export default function SidebarLink({ link }) {
       } transition-all duration-200`}
     >
       <div className={`flex items-center gap-x-2 p-2 rounded-lg ${
-        location.pathname === link.path ? 'bg-green-200' : 'bg-gray-50'
+        location.pathname === link.path ? 'bg-green-300 border-black': 'bg-gray-50'
       }`}>
         <link.icon className="text-xl bg-green-200" />
         <span>{link.name}</span>

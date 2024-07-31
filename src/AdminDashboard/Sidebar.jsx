@@ -22,7 +22,10 @@ const handleLogout=()=>{
 }
   return (
     <>
-    <nav className="h-full bg-slate-300 text-black p-3 overflow-y-auto">
+    <nav className="h-full  bg-slate-300 text-black p-3 overflow-y-auto rounded-3xl m-5 ">
+      <div className=" justify-between text-2xl  text-center m-4" >
+        Navigations
+      </div>
       <ul className="space-y-2">
         {sidebarLinks.map((link) => (
           <li key={link.id}>

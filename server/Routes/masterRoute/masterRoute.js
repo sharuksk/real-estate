@@ -1,7 +1,7 @@
 const express=require('express');
 const { isAuthenticated } = require('../../middlewares/isAuthenticated');
 const { addAmenity, deleteAmenity, listAmenity, addSource, deleteSource, listSource, addPropertyType, deletepropertyType, listPropertyType } = require('../../controllers/realEstateController/masterController');
-const { createLead, deleteLead, getLeadById, updateLead } = require('../../controllers/realEstateController/leadController');
+const { createLead, deleteLead, getLeadById, updateLead, getLeadSource, getLeadPropertyType, getAllLeads } = require('../../controllers/realEstateController/leadController');
 const { adminMiddleware } = require('../../middlewares/roleMiddleware');
 const masterRouter=express.Router();
 //**Amenity  */
@@ -21,7 +21,14 @@ masterRouter.get('/list-propertyType',isAuthenticated,adminMiddleware,listProper
 //**Lead */
 masterRouter.post('/add-lead',isAuthenticated,adminMiddleware,createLead);
 masterRouter.delete('/delete-lead/:id',isAuthenticated,adminMiddleware,deleteLead);
-masterRouter.get('/list-lead/:id',isAuthenticated,adminMiddleware,getLeadById)
+masterRouter.get('/list-lead',isAuthenticated,adminMiddleware,getAllLeads)
+masterRouter.get('/get-lead/:id',isAuthenticated,adminMiddleware,getLeadById)
 masterRouter.put('/update-lead/:id',isAuthenticated,adminMiddleware,updateLead)
+
+
+//"lead listing"
+masterRouter.get('/list-leadsource',isAuthenticated,adminMiddleware,getLeadSource)
+masterRouter.get('/list-type',isAuthenticated,adminMiddleware,getLeadPropertyType)
+
 
 module.exports=masterRouter;

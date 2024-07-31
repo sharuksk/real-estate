@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const agentSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,8 +9,8 @@ const agentSchema = new mongoose.Schema({
   contact: {
     type: String,
     trim: true,
-    required:true,
-    maxlength: 10,  
+    required: true,
+    maxlength: 10,
   },
   address: {
     type: String,

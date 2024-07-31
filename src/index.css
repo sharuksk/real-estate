@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.placeholder-black::placeholder {
+  color: black;
+}

@@ -1,29 +1,76 @@
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { AllProjectsAPI } from "../../APIServices/projectAPI/projectAPI";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import {
+  AllProjectsAPI,
+  deleteProjectAPI,
+} from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const ProjectLists = () => {
   const navigate = useNavigate();
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["get-project"],
     queryFn: AllProjectsAPI,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
 
-  // [
-  //   { name: "Project 1", location: "Doha, Qatar", count: 43 },
-  //   { name: "Project 2", location: "Doha, Qatar", count: 56 },
-  //   { name: "Project 3", location: "Doha, Qatar", count: 25 },
-  //   { name: "Project 3", location: "Doha, Qatar", count: 25 },
-  //   { name: "Project 3", location: "Doha, Qatar", count: 25 },
-  // ]
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-project"],
+    mutationFn: deleteProjectAPI,
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   const handleEdit = (id) => {
     // console.log(id);
     navigate("/admin-dashboard/project/edit", { state: { id } });
+  };
+
+  const handleDelete = (id) => {
+    const loadingToastId = toast.loading("deleting...", {
+      style: {
+        backgroundColor: "#4a90e2",
+        color: "white",
+        borderRadius: "0.375rem",
+        padding: "0.75rem 1.25rem",
+        fontSize: "0.875rem",
+        fontWeight: "bold",
+      },
+    });
+    deleteMutation
+      .mutateAsync(id)
+      .then((res) => {
+        console.log(res);
+        toast.success(res.message, {
+          style: {
+            backgroundColor: "#34d399",
+            color: "white",
+            borderRadius: "0.375rem",
+            padding: "0.75rem 1.25rem",
+            fontSize: "0.875rem",
+            fontWeight: "bold",
+          },
+        });
+        toast.dismiss(loadingToastId);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Delete project Error: " + err.message, {
+          style: {
+            backgroundColor: "#ef4444",
+            color: "white",
+            borderRadius: "0.375rem",
+            padding: "0.75rem 1.25rem",
+            fontSize: "0.875rem",
+            fontWeight: "bold",
+          },
+        });
+        toast.dismiss(loadingToastId);
+      });
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -50,38 +97,39 @@ const ProjectLists = () => {
           </Link>
         </div>
         <div className="w-full h-full bg-white text-xl rounded-2xl p-3">
-          <table className="w-full border-separate border-spacing-y-2">
+          <table className="w-full table-fixed border-separate border-spacing-y-2">
             <thead>
               <tr className="w-full font-light">
-                <th className="py-2 px-4 text-left">Project Name</th>
-                <th className="py-2 px-4 text-left">Location</th>
-                <th className="py-2 px-4 text-left">
+                <th className="py-2 px-4 text-left w-1/4">Project Name</th>
+                <th className="py-2 px-4 text-left w-1/4">Location</th>
+                <th className="py-2 px-4 text-left w-1/4">
                   Available Properties count
                 </th>
-                <th className="py-2 px-4 text-left">Actions</th>
+                <th className="py-2 px-4 text-left w-1/4">Actions</th>
               </tr>
             </thead>
             <tbody>
               {data?.projects?.map((project, index) => (
                 <tr key={index}>
                   <td colSpan="4">
-                    <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2">
-                      <div className="py-2 pr-52">{project.projectName}</div>
-                      <div className="py-2 pr-52">{project.location}</div>
-                      <div className="py-2 pr-52">43</div>
-                      <div className="pl-32 flex space-x-2">
+                    <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
+                      <div className="py-2 w-1/4">{project.projectName}</div>
+                      <div className="py-2 w-1/4">{project.location}</div>
+                      <div className="py-2 w-1/4">43</div>
+                      <div className="w-1/4 flex space-x-2">
                         <button className="text-black hover:text-blue-700">
                           <FiEye />
                         </button>
-                        {/* <Link to={`/admin-dashboard/project/edit`}> */}
                         <button
                           onClick={() => handleEdit(project._id)}
                           className="text-black hover:text-yellow-700"
                         >
                           <FiEdit2 />
                         </button>
-                        {/* </Link> */}
-                        <button className="text-black hover:text-red-700">
+                        <button
+                          onClick={() => handleDelete(project._id)}
+                          className="text-black hover:text-red-700"
+                        >
                           <FiTrash2 />
                         </button>
                       </div>

@@ -29,7 +29,7 @@ projectRouter.post(
   editProject
 );
 projectRouter.delete(
-  "/delete-project",
+  "/delete-project/:projectId",
   isAuthenticated,
   adminMiddleware,
   deleteProjectById

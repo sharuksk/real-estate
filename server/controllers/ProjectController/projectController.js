@@ -25,7 +25,7 @@ exports.addProject = async (req, res) => {
     });
     await newProject.save();
     return res.status(200).json({
-      message: "Project Created Successfullyyy",
+      message: "Project Created Successfully",
       success: true,
       data: newProject,
     });
@@ -50,20 +50,21 @@ exports.editProject = async (req, res) => {
       });
     }
 
-    if (req.files && req.files.coverImage) {
-      console.log("Cover Image Update");
-      const coverImage = req.files.coverImage;
-      const uploadedImage = await uploadImageToCloudinary(
-        coverImage.tempFilePath,
-        process.env.FOLDER_NAME
-      );
-      project.coverImage = uploadedImage.secure_url;
-    }
-    const { projectName, location, area, description } = req.body;
+    // if (req.files && req.files.coverImage) {
+    //   console.log("Cover Image Update");
+    //   const coverImage = req.files.coverImage;
+    //   const uploadedImage = await uploadImageToCloudinary(
+    //     coverImage.tempFilePath,
+    //     process.env.FOLDER_NAME
+    //   );
+    //   project.coverImage = uploadedImage.secure_url;
+    // }
+    const { projectName, location, area, description, coverImage } = req.body;
     if (projectName) project.projectName = projectName;
     if (location) project.location = location;
     if (area) project.area = area;
     if (description) project.description = description;
+    if (coverImage) project.coverImage = coverImage;
 
     await project.save();
 

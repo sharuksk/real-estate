@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { AddProjectAPI } from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const AddProjects = () => {
   const [formData, setFormData] = useState({});
@@ -38,6 +39,16 @@ const AddProjects = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const loadingToastId = toast.loading("creating...", {
+      style: {
+        backgroundColor: "#4a90e2",
+        color: "white",
+        borderRadius: "0.375rem",
+        padding: "0.75rem 1.25rem",
+        fontSize: "0.875rem",
+        fontWeight: "bold",
+      },
+    });
 
     const data = { ...formData };
 
@@ -45,13 +56,44 @@ const AddProjects = () => {
       data.coverImage = await fileToBase64(formData.coverImage[0]);
     }
 
+    const AddData = new FormData();
+    AddData.append("projectName", data.projectName);
+    AddData.append("location", data.location);
+    AddData.append("area", data.area);
+    AddData.append("description", data.description);
+    AddData.append("coverImage", data.coverImage);
+
     projectMutation
-      .mutateAsync(data)
+      .mutateAsync(AddData)
       .then((res) => {
         console.log(res);
+        toast.success(res.message, {
+          style: {
+            backgroundColor: "#34d399",
+            color: "white",
+            borderRadius: "0.375rem",
+            padding: "0.75rem 1.25rem",
+            fontSize: "0.875rem",
+            fontWeight: "bold",
+          },
+        });
+        toast.dismiss(loadingToastId);
         navigate("/admin-dashboard/projects");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        toast.error("Add project Error: " + err.message, {
+          style: {
+            backgroundColor: "#ef4444",
+            color: "white",
+            borderRadius: "0.375rem",
+            padding: "0.75rem 1.25rem",
+            fontSize: "0.875rem",
+            fontWeight: "bold",
+          },
+        });
+        toast.dismiss(loadingToastId);
+      });
   };
 
   return (

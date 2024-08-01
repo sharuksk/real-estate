@@ -1,9 +1,10 @@
 const leadSchema = require("../../models/RealEstate/leadSchema");
 const propertyTypeSchema=require("../../models/RealEstate/propertyType");
 const sourceSchema = require("../../models/RealEstate/sourceSchema");
+const agentSchema = require("../../models/Users/agentSchema");
 exports.createLead = async (req, res) => {
     try {
-      const { clientname, propertyType, source, agentName } = req.body;
+      const {leadName, contact, email,location,propertyType, source, agentName } = req.body;
 ///agent change
       if (propertyType) {
         const propertyTypeExists = await propertyTypeSchema.findById(propertyType);
@@ -12,9 +13,13 @@ exports.createLead = async (req, res) => {
   
       const sourceExists = await sourceSchema.findById(source);
       if (!sourceExists) return res.status(400).json({ message: 'Invalid source ID' });
-  
-      const newLead = new Lead({
-        clientname,
+      const agentExists=await agentSchema.findById(agentName);
+      if (!agentExists) return res.status(400).json({ message: 'Invalid property type ID' });
+      const newLead = new leadSchema({
+        contact,
+        email,
+        location,
+        leadName,
         propertyType,
         source,
         agentName
@@ -26,6 +31,7 @@ exports.createLead = async (req, res) => {
         newLead
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         error: error.message,
         message: "Unexpected error occurred"
@@ -34,43 +40,59 @@ exports.createLead = async (req, res) => {
   };
   
   // Get a lead by ID
-  exports.getLeadById = async (req, res) => {
+ exports.getLeadById = async (req, res) => {
     try {
-      const { id } = req.params;
-      const lead = await leadSchema.findById(id).populate('PropertyType').populate('Source');
-  
-      if (!lead) return res.status(404).json({ message: 'Lead not found' });
-  
-     return res.status(200).json({
-        message:"Lead Fetched Successfully",
-        lead,
-     })
+        const { id } = req.params; // Extract ID from the request parameters
+        const lead = await leadSchema.findById(id) // Fetch lead by ID
+            .populate('propertyType') // Populate propertyType field
+            .populate('source') // Populate source field
+            .populate('agentName'); // Populate agentName field
+
+        if (!lead) {
+            return res.status(404).json({ message: 'Lead not found' });
+        }
+
+        return res.status(200).json({
+            message: "Lead Fetched Successfully",
+            lead,
+        });
     } catch (error) {
-      res.status(500).json({
-        error: error.message,
-        message: "Unexpected error occurred"
-      });
+        console.log(error);
+        res.status(500).json({
+            error: error.message,
+            message: "Unexpected error occurred"
+        });
     }
-  };
+};
+
   
   // Update a lead by ID
   exports.updateLead = async (req, res) => {
     try {
       const { id } = req.params;
-      const { clientname, propertyType, source, agentName } = req.body; ///leadname
-//agent change
+      const { leadName, contact, email, location, propertyType, source, agentName } = req.body;
+  
       if (propertyType) {
         const propertyTypeExists = await propertyTypeSchema.findById(propertyType);
         if (!propertyTypeExists) return res.status(400).json({ message: 'Invalid property type ID' });
       }
   
+      // Validate source ID
       const sourceExists = await sourceSchema.findById(source);
       if (!sourceExists) return res.status(400).json({ message: 'Invalid source ID' });
   
-      const updatedLead = await Lead.findByIdAndUpdate(
+      // Validate agent ID
+      const agentExists = await agentSchema.findById(agentName);
+      if (!agentExists) return res.status(400).json({ message: 'Invalid agent ID' });
+  
+      // Update the lead
+      const updatedLead = await leadSchema.findByIdAndUpdate(
         id,
         {
-          clientname,
+          leadName, 
+          contact,
+          email,
+          location,
           propertyType,
           source,
           agentName
@@ -85,12 +107,14 @@ exports.createLead = async (req, res) => {
         updatedLead
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         error: error.message,
         message: "Unexpected error occurred"
       });
     }
   };
+  
   
   // Delete a lead by ID
   exports.deleteLead = async (req, res) => {
@@ -115,8 +139,38 @@ exports.createLead = async (req, res) => {
   // Get all leads
   exports.getAllLeads = async (req, res) => {
     try {
-      const leads = await leadSchema.find().populate('PropertyType').populate('Source');
-      res.status(200).json(leads);
+      const { page = 1, limit = 10, search = '' } = req.query;
+      const parsedPage = parseInt(page, 10);
+      const parsedLimit = parseInt(limit, 10);
+      const skip = (parsedPage - 1) * parsedLimit;
+  
+      // Total count of documents matching the search query
+      const total = await leadSchema.countDocuments({
+        leadName: { $regex: search, $options: 'i' }
+      });
+  
+      // Fetch leads with pagination and search
+      const leads = await leadSchema.find({
+        leadName: { $regex: search, $options: 'i' }
+      }).skip(skip)
+        .limit(parsedLimit)
+        .populate('propertyType')
+        .populate('source').populate('agentName')
+        .exec();
+  
+      // Calculate totalPages and currentPage
+      const totalPages = Math.ceil(total / parsedLimit);
+      const currentPage = parsedPage;
+  
+      res.status(200).json({
+        success: true,
+        message: "List Fetched Successfully",
+        leads,
+        totalPages,
+        currentPage,
+        totalCount: total
+      });
+  
     } catch (error) {
       res.status(500).json({
         error: error.message,
@@ -124,3 +178,34 @@ exports.createLead = async (req, res) => {
       });
     }
   };
+  
+exports.getLeadSource= async (req,res)=>{
+  try{
+const sources=await sourceSchema.find().populate();
+return res.status(200).json({
+  message:"Source of Lead Fetched Succcessfully",
+  sources,
+})
+  }catch(error){
+console.log(error);
+return res.status(500).json({
+  message:"Unexpcted Error"
+})
+  }
+}
+exports.getLeadPropertyType=async (req,res)=>{
+  try{
+    const propertyTypes=await propertyTypeSchema.find().populate();
+return res.status(200).json({
+  message:"Property Type Fetched Successfully",
+  propertyTypes,
+})
+
+  }catch(error){
+console.log(error);
+return res.status(500).json({
+  message:"Unexpected Error",
+
+})
+  }
+}

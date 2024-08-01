@@ -25,7 +25,7 @@ export const sidebarLinks = [
     icon: VscProject,
   },
   { id: 5, name: "Properties", path: "/dashboard/properties", icon: VscHome },
-  { id: 6, name: "Leads", path: "/dashboard/leads", icon: VscMegaphone },
+  { id: 6, name: "Leads", path: "/admin-dashboard/leads", icon: VscMegaphone },
   { id: 7, name: "Owners", path: "/admin-dashboard/owners", icon: VscPerson },
   {
     id: 8,

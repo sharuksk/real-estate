@@ -155,7 +155,7 @@ clients,   })
   };
   exports.getAgent = async (req, res) => {
     try {
-      const agents = await agentSchema.find().populate('Project');
+      const agents = await agentSchema.find().populate('projects');
    return res.status(200).json({
     messsage:"Clients Details Fetched Successfully",
 agents,   })
@@ -309,8 +309,29 @@ agents,   })
   // Get all owners
   exports.getAllOwners = async (req, res) => {
     try {
-      const owners = await ownerSchema.find();
-      res.status(200).json(owners);
+      const {page=1,limit=3,search=''}=req.query;
+      const parsedPage=parseInt(page,10);
+      const parsedLimit=parseInt(limit,10);
+      const skip=(parsedPage-1)*parsedLimit;
+
+      const total=await ownerSchema.countDocuments({
+        name:{$regex:search,$options:'i'}
+      });
+      const listOwner=await ownerSchema.find({
+        name:{$regex:search,$options:'i'}
+      }).skip(skip).limit(parsedLimit).exec();
+      const totalPages=Math.ceil(total/parsedLimit);
+      const currentPage=Math.min(parsedPage,totalPages);
+      res.status(200).json({
+        success:true,
+        messsage:"Owner Fetched Successfully",
+        listOwner,
+        totalPages,
+        currentPage,
+        totalCount:total,
+      })
+      // const owners = await ownerSchema.find();
+      // res.status(200).json(owners);
     } catch (error) {
       res.status(500).json({
         error: error.message,

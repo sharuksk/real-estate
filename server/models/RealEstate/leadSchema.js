@@ -1,8 +1,24 @@
 const mongoose = require("mongoose");
 const leadSchema = new mongoose.Schema({
-  clientname: {
+ leadName: {
     type: String,
     required: true,
+  },
+  contact: {
+    type: String,
+    trim: true,
+    required: true,
+    maxlength: 10,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true,
   },
   propertyType: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,7 +30,8 @@ const leadSchema = new mongoose.Schema({
     required: true,
   },
   agentName: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"Agent",
     required: true,
   }
 }, {

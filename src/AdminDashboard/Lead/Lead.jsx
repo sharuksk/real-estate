@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { addLead, getAgentsAPI, getleadpropertytTypeAPI, getleadSourceAPI } from '../../APIServices/leadsAPI/leadsAPI';
 import toast from 'react-hot-toast';
+import { Spinner } from '../../common/Spinner';
 
 export const Lead = () => {
   // Fetch property types
@@ -78,7 +79,7 @@ export const Lead = () => {
 //   </div>
 // }
 
-  if (agentsLoading || propertyTypesLoading || sourcesLoading) return <div>Loading...</div>;
+  if (agentsLoading || propertyTypesLoading || sourcesLoading) return <Spinner/>;
   if (agentsError) return <div>Error fetching agents: {agentsError.message}</div>;
   if (propertyTypesError) return <div>Error fetching property types: {propertyTypesError.message}</div>;
   if (sourcesError) return <div>Error fetching sources: {sourcesError.message}</div>;

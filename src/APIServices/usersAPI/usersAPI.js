@@ -16,3 +16,12 @@ export const logoutAPI=async ()=>{
     })
     return response?.data;
 }
+export const checkAuthenticatedAPI = async () => {
+    const response = await axios.get(`${BASE_URL}/user/checkAuth`, {
+      withCredentials: true,
+    });
+
+    return response.data; 
+   
+  };
+  

@@ -37,7 +37,7 @@ export const PropertyTypeList = () => {
     const currentPage = data?.currentPage || 1;
 
     return (
-        <section className='py-8'>
+<section className='py-8 bg-gray-300 rounded-3xl'>
             <div className='container px-4 mx-auto'>
                 <div className='flex flex-col space-y-4'>
                     <div className='flex justify-between items-center px-6 pb-4 border-b'>
@@ -45,25 +45,10 @@ export const PropertyTypeList = () => {
                             type='text'
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder='Search amenities'
+                            placeholder='Search Propety Type'
                             className='p-2 border rounded-2xl'
                         />
-                        <div className='flex gap-4'>
-                            <button
-                                onClick={() => setPage((old) => Math.max(old - 1, 1))}
-                                disabled={page === 1}
-                                className='py-2 px-4 border border-gray-300 rounded'
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => setPage((old) => (currentPage < totalPages ? old + 1 : old))}
-                                disabled={page === totalPages}
-                                className='py-2 px-4 border border-gray-300 rounded'
-                            >
-                                Next
-                            </button>
-                        </div>
+                       
                     </div>
 
                     <div className='px-6 pb-4'>
@@ -104,6 +89,22 @@ export const PropertyTypeList = () => {
                                 </tbody>
                             </table>
                             <div className='bg-gray-100 text-sm'>Showing {currentPage} of {totalPages} pages</div>
+                            <div className='flex gap-4 justify-center mt-3'>
+                            <button
+                                onClick={() => setPage((old) => Math.max(old - 1, 1))}
+                                disabled={page === 1}
+                                className='py-2 px-4 border border-gray-300 rounded'
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setPage((old) => (currentPage < totalPages ? old + 1 : old))}
+                                disabled={page === totalPages}
+                                className='py-2 px-4 border border-gray-300 rounded'
+                            >
+                                Next
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </div>

@@ -1,12 +1,40 @@
-import React from 'react'
+import React from 'react';
+import './Spinner.css'; // Import the custom CSS
 
 export const Spinner = () => {
   return (
-    <div><div class='flex space-x-2 justify-center items-center bg-white h-screen dark:invert'>
-    <span class='sr-only'>Loading...</span>
-     <div class='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]'></div>
-   <div class='h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-   <div class='h-8 w-8 bg-black rounded-full animate-bounce'></div>
-</div></div>
-  )
-}
+    <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50 backdrop-blur-sm z-50">
+  <div class="loader">
+  <div class="box box0">
+    <div></div>
+  </div>
+  <div class="box box1">
+    <div></div>
+  </div>
+  <div class="box box2">
+    <div></div>
+  </div>
+  <div class="box box3">
+    <div></div>
+  </div>
+  <div class="box box4">
+    <div></div>
+  </div>
+  <div class="box box5">
+    <div></div>
+  </div>
+  <div class="box box6">
+    <div></div>
+  </div>
+  <div class="box box7">
+    <div></div>
+  </div>
+  <div class="ground">
+    <div></div>
+  </div>
+</div>
+  </div>
+  );
+};
+
+

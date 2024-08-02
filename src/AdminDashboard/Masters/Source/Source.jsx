@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import FormComponent from '../../../common/FormComponent';
 import { useQuery } from '@tanstack/react-query';
 import { addSourceAPI } from '../../../APIServices/mastersAPI/sourceAPI';
+import { SourceList } from './SourceList';
+import { Spinner } from '../../../common/Spinner';
 export const Source = () => {
   const { isLoading, isError, error, refetch } = useQuery({
     keepPreviousData: true,
@@ -19,8 +21,12 @@ export const Source = () => {
     await addSourceAPI(values);
     refetch();
   };
-
+  if(isLoading){
+    return <Spinner/>
+  }
   return (
+    <>
+    <div className='justify-center flex w-full bg-gray-300 '>
     <FormComponent
       initialValues={initialValues}
       validationSchema={validationSchema}
@@ -38,5 +44,8 @@ export const Source = () => {
         },
       ]}
     />
+    </div>
+   <SourceList/>
+    </>
   );
 };

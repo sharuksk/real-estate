@@ -38,7 +38,7 @@ export const AmentyList = () => {
     const currentPage = data?.currentPage || 1;
 
     return (
-        <section className='py-8'>
+        <section className='py-8 bg-gray-300'>
             <div className='container px-4 mx-auto'>
                 <div className='flex flex-col space-y-4'>
                     <div className='flex justify-between items-center px-6 pb-4 border-b'>

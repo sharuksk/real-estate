@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { deleteSourceTypeAPI, getSourceAPI } from '../../../APIServices/mastersAPI/sourceAPI';
+import { Spinner } from '../../../common/Spinner';
 
 export const SourceList = () => {
     const [page, setPage] = useState(1);
@@ -30,7 +31,7 @@ export const SourceList = () => {
         sourceMutation .mutateAsync(id);
     };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Spinner/>;
     if (isError) return <div>Error: {error.message}</div>;
 
     const source = data?.source || [];
@@ -38,7 +39,7 @@ export const SourceList = () => {
     const currentPage = data?.currentPage || 1;
 
     return (
-        <section className='py-8'>
+        <section className='py-8 bg-gray-300'>
             <div className='container px-4 mx-auto'>
                 <div className='flex flex-col space-y-4'>
                     <div className='flex justify-between items-center px-6 pb-4 border-b'>
@@ -46,25 +47,10 @@ export const SourceList = () => {
                             type='text'
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder='Search amenities'
+                            placeholder='Search Source'
                             className='p-2 border rounded-2xl'
                         />
-                        <div className='flex gap-4'>
-                            <button
-                                onClick={() => setPage((old) => Math.max(old - 1, 1))}
-                                disabled={page === 1}
-                                className='py-2 px-4 border border-gray-300 rounded'
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => setPage((old) => (currentPage < totalPages ? old + 1 : old))}
-                                disabled={page === totalPages}
-                                className='py-2 px-4 border border-gray-300 rounded'
-                            >
-                                Next
-                            </button>
-                        </div>
+                     
                     </div>
 
                     <div className='px-6 pb-4'>
@@ -105,6 +91,22 @@ export const SourceList = () => {
                                 </tbody>
                             </table>
                             <div className='bg-gray-100 text-sm'>Showing {currentPage} of {totalPages} pages</div>
+                            <div className='flex gap-4 justify-center' >
+                            <button
+                                onClick={() => setPage((old) => Math.max(old - 1, 1))}
+                                disabled={page === 1}
+                                className='py-2 px-4 border border-gray-300 rounded'
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setPage((old) => (currentPage < totalPages ? old + 1 : old))}
+                                disabled={page === totalPages}
+                                className='py-2 px-4 border border-gray-300 rounded'
+                            >
+                                Next
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </div>

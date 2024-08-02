@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import { addAmenityAPI } from '../../../APIServices/mastersAPI/amenityAPI';
 import FormComponent from '../../../common/FormComponent';
 import { useQuery } from '@tanstack/react-query';
+import { Spinner } from '../../../common/Spinner';
+import { AmentyList } from './AmentyList';
 export const Amenity = () => {
   const { isLoading, isError, error, refetch } = useQuery({
     keepPreviousData: true,
@@ -20,9 +22,13 @@ export const Amenity = () => {
     await addAmenityAPI(values);
     refetch();
   };
-
+if(isLoading){
+  return <Spinner/>
+}
   return (
-    <FormComponent
+    <>
+<div className='justify-center flex w-full bg-gray-300 '>
+<FormComponent
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -39,5 +45,10 @@ export const Amenity = () => {
         },
       ]}
     />
+    
+</div>
+<AmentyList/>
+   
+        </>
   );
 };

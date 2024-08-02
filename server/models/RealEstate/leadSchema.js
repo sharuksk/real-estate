@@ -27,12 +27,12 @@ const leadSchema = new mongoose.Schema({
   source: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Source",
-    required: true,
+    // required: true,
   },
   agentName: {
     type: mongoose.Schema.Types.ObjectId,
     ref:"Agent",
-    required: true,
+    // required: true,
   }
 }, {
   timestamps: true, 

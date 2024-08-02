@@ -177,26 +177,29 @@ exports.logout = async (req, res) => {
   }
 };
 
-exports.checkAuthenticated=async (req,res)=>{
-    const decoded=jwt.verify(req.cookies.token,process.env.JWT_SECRET);
-    
-    try{
-        if(decoded){
-            res.json({
-                isAuthenticated:true,
-            })
-        }else{
-            res.json({
-                isAuthenticated:false,
-            })
+// API Service to check authentication
+exports.checkAuthenticated = async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+    if (decoded) {
+      res.json({
+        isAuthenticated: true,
+        user: {
+          id: decoded.id,
+          role: decoded.role 
         }
-    }catch(error){
-console.log(error);
-return res.status(404).json({
-    success:false,
-    message:"Unexpected Error"
-})
+      });
+    } else {
+      res.json({
+        isAuthenticated: false,
+      });
     }
-   
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      success: false,
+      message: "Unexpected Error"
+    });
+  }
+};
 
-}

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
 
-const ProjectLists = () => {
+const PropertiesLists = () => {
   const navigate = useNavigate();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["get-project"],
@@ -28,7 +28,7 @@ const ProjectLists = () => {
 
   const handleEdit = (id) => {
     // console.log(id);
-    navigate("/admin-dashboard/project/edit", { state: { id } });
+    navigate("/admin-dashboard/properties/edit", { state: { id } });
   };
 
   const handleDelete = (id) => {
@@ -91,9 +91,9 @@ const ProjectLists = () => {
             className="flex rounded-3xl p-2 focus:outline-none placeholder-black text-center"
             placeholder="Search here"
           />
-          <Link to={`/admin-dashboard/project/add`}>
+          <Link to={`/admin-dashboard/properties/add`}>
             <button className="bg-[#58ac3b] p-2 rounded-full">
-              Add Projects
+              Add Properties
             </button>
           </Link>
         </div>
@@ -101,11 +101,9 @@ const ProjectLists = () => {
           <table className="w-full table-fixed border-separate border-spacing-y-2">
             <thead>
               <tr className="w-full font-light">
-                <th className="py-2 px-4 text-left w-1/4">Project Name</th>
+                <th className="py-2 px-4 text-left w-1/4"> Properties Name</th>
                 <th className="py-2 px-4 text-left w-1/4">Location</th>
-                <th className="py-2 px-4 text-left w-1/4">
-                  Available Properties count
-                </th>
+                <th className="py-2 px-4 text-left w-1/4">Project Name</th>
                 <th className="py-2 px-4 text-left w-1/4">Actions</th>
               </tr>
             </thead>
@@ -153,4 +151,4 @@ const ProjectLists = () => {
   );
 };
 
-export default ProjectLists;
+export default PropertiesLists;

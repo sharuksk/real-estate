@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { AddProjectAPI } from "../../APIServices/projectAPI/projectAPI";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 const AddProjects = () => {
@@ -101,9 +101,11 @@ const AddProjects = () => {
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between bg-white rounded-2xl p-4 mb-4 font-semibold text-2xl">
           <div>Add Projects</div>
-          <div className="bg-[#7ca7ac] px-4 rounded-xl hidden md:block">
-            Projects List
-          </div>
+          <Link to={`/admin-dashboard/projects`}>
+            <button className="bg-[#7ca7ac] px-4 rounded-xl hidden md:block">
+              Projects List
+            </button>
+          </Link>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row w-full gap-14 items-start md:items-center">

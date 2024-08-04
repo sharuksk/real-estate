@@ -68,7 +68,7 @@ exports.addProperty = async (req, res) => {
 };
 exports.listProperties = async (req, res) => {
   try {
-    const findProject = await Property.find();
+    const findProject = await Property.find().populate("project");
     return res.status(200).json({
       success: true,
       message: "Property fetched Successfully",
@@ -154,9 +154,9 @@ exports.updateProperty = async (req, res) => {
 };
 exports.deleteProperty = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { propertyId } = req.params;
 
-    const deletedProperty = await Property.findByIdAndDelete(id);
+    const deletedProperty = await Property.findByIdAndDelete(propertyId);
 
     if (!deletedProperty) {
       return res.status(404).json({ message: "Property not found" });
@@ -169,6 +169,34 @@ exports.deleteProperty = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Unexpected error occurred",
+      error: error.message,
+    });
+  }
+};
+
+exports.getPropertyById = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const property = await Property.findById(propertyId).populate(
+      "project referenceAgent amenities propertyType"
+    );
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property Not Found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      property,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
       error: error.message,
     });
   }

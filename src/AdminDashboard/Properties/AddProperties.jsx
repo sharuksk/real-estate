@@ -112,7 +112,7 @@ const AddProperties = () => {
     }
   };
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = (file, loadingToastId) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
       const fileName = new Date().getTime() + file.name;
@@ -128,6 +128,7 @@ const AddProperties = () => {
         },
         (error) => {
           setImageUploadError(true);
+          toast.dismiss(loadingToastId);
           reject(error);
         },
         () => {
@@ -155,7 +156,10 @@ const AddProperties = () => {
     let data = { ...formData };
 
     if (formData.coverImage) {
-      const downloadURL = await handleFileUpload(formData.coverImage[0]);
+      const downloadURL = await handleFileUpload(
+        formData.coverImage[0],
+        loadingToastId
+      );
       data = {
         ...data,
         coverImage: downloadURL,
@@ -390,10 +394,14 @@ const AddProperties = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row mx-auto gap-16">
-            <button className="flex py-2 bg-[#58ac3b] rounded-full px-12 text-white">
-              Submit
+            <button
+              disabled={propertiesMutation.isLoading}
+              className="flex py-2 bg-[#58ac3b] rounded-full px-12 text-white"
+            >
+              {propertiesMutation.isLoading ? "Submitting..." : "Submit"}
             </button>
             <button
+              disabled={propertiesMutation.isLoading}
               type="reset"
               className="flex py-2 bg-[#686868] rounded-full px-12 text-white"
             >

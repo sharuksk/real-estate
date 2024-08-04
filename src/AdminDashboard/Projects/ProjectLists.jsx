@@ -4,13 +4,18 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   AllProjectsAPI,
   deleteProjectAPI,
+  getProjectAPI,
 } from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
+import { useState } from "react";
+import { ProjectModal } from "./ProjectModal";
 
 const ProjectLists = () => {
   const navigate = useNavigate();
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["get-project"],
     queryFn: AllProjectsAPI,
@@ -27,8 +32,18 @@ const ProjectLists = () => {
   });
 
   const handleEdit = (id) => {
-    // console.log(id);
     navigate("/admin-dashboard/project/edit", { state: { id } });
+  };
+
+  const handleView = async (id) => {
+    try {
+      const project = await getProjectAPI(id);
+      setSelectedProject(project.project);
+      setModalOpen(true);
+      toast.success("project view opened");
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
+    }
   };
 
   const handleDelete = (id) => {
@@ -118,7 +133,10 @@ const ProjectLists = () => {
                       <div className="py-2 w-1/4">{project.location}</div>
                       <div className="py-2 w-1/4">43</div>
                       <div className="w-1/4 flex space-x-2">
-                        <button className="text-black hover:text-blue-700">
+                        <button
+                          onClick={() => handleView(project._id)}
+                          className="text-black hover:text-blue-700"
+                        >
                           <FiEye />
                         </button>
                         <button
@@ -149,6 +167,13 @@ const ProjectLists = () => {
           <span>Showing 3 to 10 of 3 entries</span>
         </div>
       </div>
+      {isModalOpen && (
+        <ProjectModal
+          isOpen={isModalOpen}
+          project={selectedProject}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

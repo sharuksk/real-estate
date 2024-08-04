@@ -1,34 +1,51 @@
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  AllProjectsAPI,
-  deleteProjectAPI,
-} from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
+import {
+  AllPropertiesAPI,
+  deletePropertyAPI,
+  getPropertyAPI,
+} from "../../APIServices/propertyAPI/propertyAPI";
+import { useState } from "react";
+import { PropertyModal } from "./PropertyModal";
 
 const PropertiesLists = () => {
   const navigate = useNavigate();
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["get-project"],
-    queryFn: AllProjectsAPI,
+    queryKey: ["list-property"],
+    queryFn: AllPropertiesAPI,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
+  console.log(data?.findProject);
 
   const deleteMutation = useMutation({
-    mutationKey: ["delete-project"],
-    mutationFn: deleteProjectAPI,
+    mutationKey: ["delete-property"],
+    mutationFn: deletePropertyAPI,
     onSuccess: () => {
       refetch();
     },
   });
 
   const handleEdit = (id) => {
-    // console.log(id);
     navigate("/admin-dashboard/properties/edit", { state: { id } });
+  };
+
+  const handleView = async (id) => {
+    try {
+      const property = await getPropertyAPI(id);
+      setSelectedProperty(property.property);
+      setModalOpen(true);
+      toast.success("property view opened");
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
+    }
   };
 
   const handleDelete = (id) => {
@@ -108,25 +125,30 @@ const PropertiesLists = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.projects?.map((project, index) => (
+              {data?.findProject?.map((property, index) => (
                 <tr key={index}>
                   <td colSpan="4">
                     <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
-                      <div className="py-2 w-1/4">{project.projectName}</div>
-                      <div className="py-2 w-1/4">{project.location}</div>
-                      <div className="py-2 w-1/4">43</div>
+                      <div className="py-2 w-1/4">{property?.propertyName}</div>
+                      <div className="py-2 w-1/4">{property?.city}</div>
+                      <div className="py-2 w-1/4">
+                        {property?.project?.projectName}
+                      </div>
                       <div className="w-1/4 flex space-x-2">
-                        <button className="text-black hover:text-blue-700">
+                        <button
+                          onClick={() => handleView(property._id)}
+                          className="text-black hover:text-blue-700"
+                        >
                           <FiEye />
                         </button>
                         <button
-                          onClick={() => handleEdit(project._id)}
+                          onClick={() => handleEdit(property._id)}
                           className="text-black hover:text-yellow-700"
                         >
                           <FiEdit2 />
                         </button>
                         <button
-                          onClick={() => handleDelete(project._id)}
+                          onClick={() => handleDelete(property._id)}
                           className="text-black hover:text-red-700"
                         >
                           <FiTrash2 />
@@ -147,6 +169,13 @@ const PropertiesLists = () => {
           <span>Showing 3 to 10 of 3 entries</span>
         </div>
       </div>
+      {isModalOpen && (
+        <PropertyModal
+          isOpen={isModalOpen}
+          property={selectedProperty}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

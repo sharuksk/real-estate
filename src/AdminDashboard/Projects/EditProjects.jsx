@@ -8,13 +8,20 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
 
 const EditProjects = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location?.state?.id);
 
   const [formData, setFormData] = useState({});
+  const [imageUploadError, setImageUploadError] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get-project"],
@@ -27,8 +34,6 @@ const EditProjects = () => {
     mutationKey: ["update-project"],
     mutationFn: EditProjectAPI,
   });
-
-  console.log(data?.project);
 
   useEffect(() => {
     if (data && data?.project) {
@@ -58,12 +63,31 @@ const EditProjects = () => {
     }
   };
 
-  const fileToBase64 = (file) => {
+  const handleFileUpload = (file, loadingToastId) => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          setImageUploadError(true);
+          toast.dismiss(loadingToastId);
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
     });
   };
 
@@ -80,23 +104,21 @@ const EditProjects = () => {
       },
     });
 
-    const data = { ...formData };
+    let data = { ...formData };
 
     if (formData.coverImage && typeof formData.coverImage === "object") {
-      data.coverImage = await fileToBase64(formData.coverImage[0]);
-      console.log("yes");
+      const downloadURL = await handleFileUpload(
+        formData.coverImage[0],
+        loadingToastId
+      );
+      data = {
+        ...data,
+        coverImage: downloadURL,
+      };
     }
 
-    const EditData = new FormData();
-    EditData.append("projectId", data.projectId);
-    EditData.append("projectName", data.projectName);
-    EditData.append("location", data.location);
-    EditData.append("area", data.area);
-    EditData.append("description", data.description);
-    EditData.append("coverImage", data.coverImage);
-
     updateProjectMutation
-      .mutateAsync(EditData)
+      .mutateAsync(data)
       .then((res) => {
         console.log(res);
         toast.success(res.message, {
@@ -195,7 +217,6 @@ const EditProjects = () => {
                   type="file"
                   className="w-full h-full hidden"
                   id="coverImage"
-                  // value={formData?.coverImage}
                   onChange={handleChange}
                 />
                 <p> Choose File</p>
@@ -205,6 +226,9 @@ const EditProjects = () => {
               <FaTrashCan />
             </button>
           </div>
+          {imageUploadError && (
+            <p className="text-red-700">Image upload error</p>
+          )}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex flex-col md:flex-row w-full gap-32 items-start md:items-center">
               <label className="font-semibold text-lg"> User</label>

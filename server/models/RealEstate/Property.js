@@ -50,12 +50,10 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  coverImage: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
+  coverImage: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Property", propertySchema);

@@ -11,6 +11,7 @@ const {
   listProperties,
   updateProperty,
   deleteProperty,
+  getPropertyById,
 } = require("../../controllers/ProjectController/propertiesController");
 const { isAuthenticated } = require("../../middlewares/isAuthenticated");
 const { adminMiddleware } = require("../../middlewares/roleMiddleware");
@@ -54,7 +55,7 @@ projectRouter.post(
   addProperty
 );
 projectRouter.delete(
-  "/delete-property",
+  "/delete-property/:propertyId",
   isAuthenticated,
   adminMiddleware,
   deleteProperty
@@ -71,4 +72,11 @@ projectRouter.get(
   adminMiddleware,
   listProperties
 );
+projectRouter.get(
+  "/get-property/:propertyId",
+  isAuthenticated,
+  adminMiddleware,
+  getPropertyById
+);
+
 module.exports = projectRouter;

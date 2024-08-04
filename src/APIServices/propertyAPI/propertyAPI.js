@@ -7,19 +7,19 @@ export const AddPropertiesAPI = async (data) => {
   return response?.data;
 };
 
-// export const AllProjectsAPI = async () => {
-//   const response = await axios.get(`${BASE_URL}/project/get-project`, {
-//     withCredentials: true,
-//   });
-//   return response?.data;
-// };
+export const AllPropertiesAPI = async () => {
+  const response = await axios.get(`${BASE_URL}/project/list-property`, {
+    withCredentials: true,
+  });
+  return response?.data;
+};
 
-// export const getProjectAPI = async (id) => {
-//   const response = await axios.get(`${BASE_URL}/project/get-project/${id}`, {
-//     withCredentials: true,
-//   });
-//   return response?.data;
-// };
+export const getPropertyAPI = async (id) => {
+  const response = await axios.get(`${BASE_URL}/project/get-property/${id}`, {
+    withCredentials: true,
+  });
+  return response?.data;
+};
 
 // export const EditProjectAPI = async (data) => {
 //   const response = await axios.post(
@@ -32,12 +32,12 @@ export const AddPropertiesAPI = async (data) => {
 //   return response?.data;
 // };
 
-// export const deleteProjectAPI = async (id) => {
-//   const response = await axios.delete(
-//     `${BASE_URL}/project/delete-project/${id}`,
-//     {
-//       withCredentials: true,
-//     }
-//   );
-//   return response?.data;
-// };
+export const deletePropertyAPI = async (id) => {
+  const response = await axios.delete(
+    `${BASE_URL}/project/delete-property/${id}`,
+    {
+      withCredentials: true,
+    }
+  );
+  return response?.data;
+};

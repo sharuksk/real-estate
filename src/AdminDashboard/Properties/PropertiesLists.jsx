@@ -1,13 +1,15 @@
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Spinner } from "../../common/Spinner";
-import { AllProjectsAPI, deleteProjectAPI } from "../../APIServices/projectAPI/projectAPI";
+import {
+  AllProjectsAPI,
+  deleteProjectAPI,
+} from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
 
-const ProjectLists = () => {
+const PropertiesLists = () => {
   const navigate = useNavigate();
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["get-project"],
@@ -25,11 +27,12 @@ const ProjectLists = () => {
   });
 
   const handleEdit = (id) => {
-    navigate("/admin-dashboard/project/edit", { state: { id } });
+    // console.log(id);
+    navigate("/admin-dashboard/properties/edit", { state: { id } });
   };
 
   const handleDelete = (id) => {
-    const loadingToastId = toast.loading("Deleting...", {
+    const loadingToastId = toast.loading("deleting...", {
       style: {
         backgroundColor: "#4a90e2",
         color: "white",
@@ -42,6 +45,7 @@ const ProjectLists = () => {
     deleteMutation
       .mutateAsync(id)
       .then((res) => {
+        console.log(res);
         toast.success(res.message, {
           style: {
             backgroundColor: "#34d399",
@@ -55,6 +59,7 @@ const ProjectLists = () => {
         toast.dismiss(loadingToastId);
       })
       .catch((err) => {
+        console.log(err);
         toast.error("Delete project Error: " + err.message, {
           style: {
             backgroundColor: "#ef4444",
@@ -73,14 +78,6 @@ const ProjectLists = () => {
   if (isError) return <div>Error: {error.message}</div>;
 
   return (
-<<<<<<< HEAD
-    <div className="w-full p-4 bg-gray-300 rounded-2xl">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 p-4 bg-white rounded-2xl">
-          <div className="flex items-center gap-2 mb-2 sm:mb-0">
-            <span className="text-xl bg-white p-2 rounded text-center">10</span>
-            <span className="text-sm sm:text-base">Records Per Page</span>
-=======
     <div className="min-h-full w-full p-9 bg-[#d8d8d8] rounded-2xl">
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between rounded-2xl p-4 mb-4 font-semibold">
@@ -88,28 +85,28 @@ const ProjectLists = () => {
             <p className="text-lg">
               <span className="bg-white p-2 text-2xl">10</span> Records per page
             </p>
->>>>>>> 71fbd12579d9f4b0b7380fb36c8f4a0ab801e766
           </div>
           <input
             type="text"
-            className="w-full sm:w-72 md:w-96 lg:w-1/2 xl:w-1/3 rounded-3xl p-2 focus:outline-none placeholder-black text-center"
+            className="flex rounded-3xl p-2 focus:outline-none placeholder-black text-center"
             placeholder="Search here"
           />
-          <Link to={`/admin-dashboard/project/add`}>
-            <button className="bg-[#58ac3b] p-2 rounded-full mt-2 sm:mt-0">Add Projects</button>
+          <Link to={`/admin-dashboard/properties/add`}>
+            <button className="bg-[#58ac3b] p-2 rounded-full">
+              Add Properties
+            </button>
           </Link>
         </div>
-        <div className="w-full bg-white rounded-2xl p-3 overflow-x-auto">
+        <div className="w-full h-full bg-white text-xl rounded-2xl p-3">
           <table className="w-full table-fixed border-separate border-spacing-y-2">
-          <thead>
-                        <tr>
-                          <th className='pb-3 text-black font-medium text-left p-3'>Project Name</th>
-                          <th className='pb-3 text-black font-medium text-left p-3'>Location</th>
-                          <th className='pb-3 text-black font-medium text-left p-3'>Available Properties Count</th>
-            
-                          <th className='pb-3 text-black font-medium text-left p-3'>Actions</th>
-                        </tr>
-                      </thead>
+            <thead>
+              <tr className="w-full font-light">
+                <th className="py-2 px-4 text-left w-1/4"> Properties Name</th>
+                <th className="py-2 px-4 text-left w-1/4">Location</th>
+                <th className="py-2 px-4 text-left w-1/4">Project Name</th>
+                <th className="py-2 px-4 text-left w-1/4">Actions</th>
+              </tr>
+            </thead>
             <tbody>
               {data?.projects?.map((project, index) => (
                 <tr key={index}>
@@ -154,4 +151,4 @@ const ProjectLists = () => {
   );
 };
 
-export default ProjectLists;
+export default PropertiesLists;

@@ -1,14 +1,16 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const adminSchema = require('../../models/Users/adminSchema');
-const userSchema = require('../../models/Users/userSchema');
-const additionalDetailSchema = require('../../models/Users/additionalDetailSchema');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const adminSchema = require("../../models/Users/adminSchema");
+const userSchema = require("../../models/Users/userSchema");
+const additionalDetailSchema = require("../../models/Users/additionalDetailSchema");
 require("dotenv").config();
 exports.adminregister = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     if (!name || !email || !password || !role) {
-      return res.status(400).json({ success: false, message: "Please Provide All Details Admin" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Please Provide All Details Admin" });
     }
 
     let hashPassword;
@@ -21,24 +23,29 @@ exports.adminregister = async (req, res) => {
 
     const existingAdmin = await adminSchema.findOne();
     if (existingAdmin) {
-      return res.status(400).json({ success: false, message: "Admin Already Exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Admin Already Exists" });
     }
 
     const Admin = new adminSchema({
       name,
       email,
       password: hashPassword,
-      role
+      role,
     });
 
     await Admin.save();
-    return res.status(201).json({ success: true, message: "Admin Created Successfully" });
+    return res
+      .status(201)
+      .json({ success: true, message: "Admin Created Successfully" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ success: false, message: "Unexpected Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Unexpected Error" });
   }
 };
-
 
 exports.register = async (req, res) => {
   try {
@@ -47,7 +54,7 @@ exports.register = async (req, res) => {
     if (!name || !email || !password || !role || !contact) {
       return res.status(401).json({
         success: false,
-        message: "Please provide all the details"
+        message: "Please provide all the details",
       });
     }
 
@@ -55,7 +62,7 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists"
+        message: "User already exists",
       });
     }
     let hashPassword;
@@ -71,7 +78,7 @@ exports.register = async (req, res) => {
       address: null,
       qatarId: null,
       preferredLanguage: null,
-      pinCode: null
+      pinCode: null,
     }); //
 
     const newUser = await userSchema.create({
@@ -80,15 +87,14 @@ exports.register = async (req, res) => {
       contact,
       password: hashPassword,
       role,
-      additionalDetails: profileDetails._id
+      additionalDetails: profileDetails._id,
     });
 
     return res.status(200).json({
       success: true,
       user: newUser,
-      message: "User registered successfully"
+      message: "User registered successfully",
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -97,7 +103,6 @@ exports.register = async (req, res) => {
     });
   }
 };
-
 
 exports.login = async (req, res) => {
   try {
@@ -111,11 +116,11 @@ exports.login = async (req, res) => {
     }
 
     let user;
-    
-    if (role === 'Admin') {
-      user = await adminSchema.findOne({ email }); 
+
+    if (role === "Admin") {
+      user = await adminSchema.findOne({ email });
     } else {
-      user = await userSchema.findOne({ email }).populate('additionalDetails'); 
+      user = await userSchema.findOne({ email }).populate("additionalDetails");
     }
 
     if (!user) {
@@ -129,7 +134,7 @@ exports.login = async (req, res) => {
       const token = jwt.sign(
         { email: user.email, id: user._id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: "24h" }
       );
 
       // user.token = token;
@@ -142,7 +147,7 @@ exports.login = async (req, res) => {
         maxAge: 24 * 60 * 60 * 1000,
       };
 
-      res.cookie('token', token, options).status(200).json({
+      res.cookie("token", token, options).status(200).json({
         success: true,
         token,
         user,
@@ -164,15 +169,15 @@ exports.login = async (req, res) => {
 };
 exports.logout = async (req, res) => {
   try {
-    res.cookie('token', '', { maxAge: 1 });
+    res.cookie("token", "", { maxAge: 1 });
     return res.status(200).json({
       success: true,
-      message: 'User Logged Out Successfully'
+      message: "User Logged Out Successfully",
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      message: 'Unexpected Error'
+      message: "Unexpected Error",
     });
   }
 };
@@ -186,8 +191,8 @@ exports.checkAuthenticated = async (req, res) => {
         isAuthenticated: true,
         user: {
           id: decoded.id,
-          role: decoded.role 
-        }
+          role: decoded.role,
+        },
       });
     } else {
       res.json({
@@ -198,8 +203,29 @@ exports.checkAuthenticated = async (req, res) => {
     console.log(error);
     res.status(404).json({
       success: false,
-      message: "Unexpected Error"
+      message: "Unexpected Error",
     });
   }
 };
 
+// get all agent
+
+exports.getAllAgent = async (req, res) => {
+  try {
+    const agent = await userSchema.find({ role: "Agent" });
+    if (!agent) {
+      return res.status(401).json({
+        success: false,
+        message: "agent not found",
+      });
+    }
+
+    return res.status(200).json(agent);
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      success: false,
+      message: "Unexpected Error",
+    });
+  }
+};

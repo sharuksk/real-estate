@@ -7,6 +7,7 @@ import {
 } from "../../APIServices/projectAPI/projectAPI";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { Spinner } from "../../common/Spinner";
 
 const EditProjects = () => {
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ const EditProjects = () => {
       });
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Spinner />;
   if (isError) return <div>Error: {error.message}</div>;
 
   return (

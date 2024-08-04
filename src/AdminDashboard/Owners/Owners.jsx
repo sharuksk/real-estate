@@ -55,7 +55,7 @@ export const Owners = () => {
     });
     
     return (
-        <div className='w-full h-full p-9 bg-gray-300 rounded-xl'>
+        <div className='w-full h-full p-9 bg-gray-300 rounded-xl '>
             <div className='flex justify-between bg-white rounded-2xl p-4 mb-4'>
                 <div>Add Owner</div>
                 <Link to="/admin-dashboard/ownerlist" className="hover:bg-red-400">
@@ -64,7 +64,7 @@ export const Owners = () => {
             </div>
             <form className='mt-6 h-full max-w-fit' onSubmit={formik.handleSubmit}>
                 <div className='space-y-6'>
-                    <div className='grid grid-cols-2 gap-6'>
+                    <div className=' md:grid md:grid-cols-2 md:gap-6 sm:grid sm:grid-cols-1 sm:gap-6'>
                         {[
                             { id: 'name', label: 'Owner Name', type: 'text', placeholder: 'Owner Name' },
                             { id: 'contact', label: 'Contact', type: 'text', placeholder: 'Owner Contact' },

@@ -1,7 +1,7 @@
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Spinner } from "../../common/Spinner";
+// import { Spinner } from "../../common/Spinner";
 import { AllProjectsAPI, deleteProjectAPI } from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -73,22 +73,12 @@ const ProjectLists = () => {
   if (isError) return <div>Error: {error.message}</div>;
 
   return (
-<<<<<<< HEAD
     <div className="w-full p-4 bg-gray-300 rounded-2xl">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 p-4 bg-white rounded-2xl">
           <div className="flex items-center gap-2 mb-2 sm:mb-0">
             <span className="text-xl bg-white p-2 rounded text-center">10</span>
             <span className="text-sm sm:text-base">Records Per Page</span>
-=======
-    <div className="min-h-full w-full p-9 bg-[#d8d8d8] rounded-2xl">
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex justify-between rounded-2xl p-4 mb-4 font-semibold">
-          <div>
-            <p className="text-lg">
-              <span className="bg-white p-2 text-2xl">10</span> Records per page
-            </p>
->>>>>>> 71fbd12579d9f4b0b7380fb36c8f4a0ab801e766
           </div>
           <input
             type="text"

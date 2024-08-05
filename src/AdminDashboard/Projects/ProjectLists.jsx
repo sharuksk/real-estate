@@ -2,8 +2,8 @@ import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  AllProjectsAPI,
   deleteProjectAPI,
+  getAllProjectsAPI,
   getProjectAPI,
 } from "../../APIServices/projectAPI/projectAPI";
 import { useNavigate } from "react-router-dom";
@@ -14,11 +14,15 @@ import { ProjectModal } from "./ProjectModal";
 
 const ProjectLists = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["get-project"],
-    queryFn: AllProjectsAPI,
+  const [search, setSearch] = useState("");
+  const limit = 10;
+
+  const { data, isLoading, refetch, isError, error } = useQuery({
+    queryKey: ["getAllproject", page, limit, search],
+    queryFn: () => getAllProjectsAPI(page, limit, search),
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
@@ -90,6 +94,10 @@ const ProjectLists = () => {
   if (isLoading) return <Spinner />;
   if (isError) return <div>Error: {error.message}</div>;
 
+  const projects = data?.projects || [];
+  const totalPages = data?.totalPages || 1;
+  const currentPage = data?.currentPage || 1;
+
   return (
     <div className="w-full p-4 bg-gray-300 rounded-2xl">
       <div className="flex flex-col gap-4">
@@ -100,7 +108,9 @@ const ProjectLists = () => {
           </div>
           <input
             type="text"
-            className="w-full sm:w-72 md:w-96 lg:w-1/2 xl:w-1/3 rounded-3xl p-2 focus:outline-none placeholder-black text-center"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:w-72 md:w-96 lg:w-1/2 xl:w-1/3 rounded-3xl p-2 placeholder-black text-center"
             placeholder="Search here"
           />
           <Link to={`/admin-dashboard/project/add`}>
@@ -129,46 +139,70 @@ const ProjectLists = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.projects?.map((project, index) => (
-                <tr key={index}>
-                  <td colSpan="4">
-                    <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
-                      <div className="py-2 w-1/4">{project.projectName}</div>
-                      <div className="py-2 w-1/4">{project.location}</div>
-                      <div className="py-2 w-1/4">43</div>
-                      <div className="w-1/4 flex space-x-2">
-                        <button
-                          onClick={() => handleView(project._id)}
-                          className="text-black hover:text-blue-700"
-                        >
-                          <FiEye />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(project._id)}
-                          className="text-black hover:text-yellow-700"
-                        >
-                          <FiEdit2 />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(project._id)}
-                          className="text-black hover:text-red-700"
-                        >
-                          <FiTrash2 />
-                        </button>
+              {projects.length ? (
+                projects.map((project, index) => (
+                  <tr key={index}>
+                    <td colSpan="4">
+                      <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
+                        <div className="py-2 w-1/4">{project.projectName}</div>
+                        <div className="py-2 w-1/4">{project.location}</div>
+                        <div className="py-2 w-1/4">43</div>
+                        <div className="w-1/4 flex space-x-2">
+                          <button
+                            onClick={() => handleView(project._id)}
+                            className="text-black hover:text-blue-700"
+                          >
+                            <FiEye />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(project._id)}
+                            className="text-black hover:text-yellow-700"
+                          >
+                            <FiEdit2 />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(project._id)}
+                            className="text-black hover:text-red-700"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="py-2 px-4 text-center text-black">
+                    No Projects Found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
         <div className="flex items-center mx-auto mt-3 gap-4 space-x-2 text-xl font-medium">
-          <button>&lt;&lt; Prev</button>
-          <button>Next &gt;&gt;</button>
+          <button
+            onClick={() => setPage((old) => Math.max(old - 1, 1))}
+            disabled={page === 1}
+            className="hover:cursor-pointer"
+          >
+            &lt;&lt; Prev
+          </button>
+          <button
+            onClick={() =>
+              setPage((old) => (page < totalPages ? old + 1 : old))
+            }
+            disabled={page === totalPages}
+            className="hover:cursor-pointer"
+          >
+            Next &gt;&gt;
+          </button>
         </div>
         <div className="p-4 font-medium mt-10">
-          <span>Showing 3 to 10 of 3 entries</span>
+          <span>
+            Showing {currentPage} to {totalPages} of {limit} entries
+          </span>
         </div>
       </div>
       {isModalOpen && (

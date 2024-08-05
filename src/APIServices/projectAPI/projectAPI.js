@@ -41,3 +41,17 @@ export const deleteProjectAPI = async (id) => {
   );
   return response?.data;
 };
+
+export const getAllProjectsAPI = async (page = 10, limit = 10, search = "") => {
+  try {
+    const response = await axios.get(`${BASE_URL}/project/getAllproject`, {
+      params: { page, limit, search },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch Projects"
+    );
+  }
+};

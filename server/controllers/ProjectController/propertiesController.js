@@ -201,3 +201,45 @@ exports.getPropertyById = async (req, res) => {
     });
   }
 };
+
+// Get all properties
+exports.getAllProperties = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = "" } = req.query;
+    const parsedPage = parseInt(page, 10);
+    const parsedLimit = parseInt(limit, 10);
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    // Total count of documents matching the search query
+    const total = await Property.countDocuments({
+      propertyName: { $regex: search, $options: "i" },
+    });
+
+    // Fetch leads with pagination and search
+    const properties = await Property.find({
+      propertyName: { $regex: search, $options: "i" },
+    })
+      .skip(skip)
+      .limit(parsedLimit)
+      .populate("project")
+      .exec();
+
+    // Calculate totalPages and currentPage
+    const totalPages = Math.ceil(total / parsedLimit);
+    const currentPage = parsedPage;
+
+    res.status(200).json({
+      success: true,
+      message: "List Fetched Successfully",
+      properties,
+      totalPages,
+      currentPage,
+      totalCount: total,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Unexpected error occurred",
+    });
+  }
+};

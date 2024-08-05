@@ -1,12 +1,8 @@
 const Project = require("../../models/RealEstate/Project");
-const { uploadImageToCloudinary } = require("../../utils/imageUploader");
 
 exports.addProject = async (req, res) => {
   try {
     const { projectName, location, area, description, coverImage } = req.body;
-    // const coverImage = req.files.coverImage;
-    // console.log("coverImage:", coverImage);
-    // console.log("coverImage.tempFilePath:", coverImage.tempFilePath);
 
     if (!projectName || !location || !area || !description || !coverImage) {
       return res.status(400).json({
@@ -14,8 +10,7 @@ exports.addProject = async (req, res) => {
         message: "All Fields are mandatory",
       });
     }
-    // const uploadedImage = await uploadImageToCloudinary(coverImage.tempFilePath, process.env.FOLDER_NAME);
-    //   console.log(uploadedImage)
+
     const newProject = await Project.create({
       projectName,
       area,
@@ -50,15 +45,6 @@ exports.editProject = async (req, res) => {
       });
     }
 
-    // if (req.files && req.files.coverImage) {
-    //   console.log("Cover Image Update");
-    //   const coverImage = req.files.coverImage;
-    //   const uploadedImage = await uploadImageToCloudinary(
-    //     coverImage.tempFilePath,
-    //     process.env.FOLDER_NAME
-    //   );
-    //   project.coverImage = uploadedImage.secure_url;
-    // }
     const { projectName, location, area, description, coverImage } = req.body;
     if (projectName) project.projectName = projectName;
     if (location) project.location = location;
@@ -145,6 +131,47 @@ exports.listAllProjects = async (req, res) => {
       success: false,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+};
+
+// Get all projects
+exports.getAllProjects = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = "" } = req.query;
+    const parsedPage = parseInt(page, 10);
+    const parsedLimit = parseInt(limit, 10);
+    const skip = (parsedPage - 1) * parsedLimit;
+
+    // Total count of documents matching the search query
+    const total = await Project.countDocuments({
+      projectName: { $regex: search, $options: "i" },
+    });
+
+    // Fetch leads with pagination and search
+    const projects = await Project.find({
+      projectName: { $regex: search, $options: "i" },
+    })
+      .skip(skip)
+      .limit(parsedLimit)
+      .exec();
+
+    // Calculate totalPages and currentPage
+    const totalPages = Math.ceil(total / parsedLimit);
+    const currentPage = parsedPage;
+
+    res.status(200).json({
+      success: true,
+      message: "Project Fetched Successfully",
+      projects,
+      totalPages,
+      currentPage,
+      totalCount: total,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Unexpected error occurred",
     });
   }
 };

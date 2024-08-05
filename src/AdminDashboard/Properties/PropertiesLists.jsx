@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
 import {
-  AllPropertiesAPI,
   deletePropertyAPI,
+  getAllPropertyAPI,
   getPropertyAPI,
 } from "../../APIServices/propertyAPI/propertyAPI";
 import { useState } from "react";
@@ -14,16 +14,18 @@ import { PropertyModal } from "./PropertyModal";
 
 const PropertiesLists = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const limit = 10;
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["list-property"],
-    queryFn: AllPropertiesAPI,
+  const { data, isLoading, refetch, isError, error } = useQuery({
+    queryKey: ["getAllProperty", page, limit, search],
+    queryFn: () => getAllPropertyAPI(page, limit, search),
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
-  console.log(data?.findProject);
 
   const deleteMutation = useMutation({
     mutationKey: ["delete-property"],
@@ -94,6 +96,10 @@ const PropertiesLists = () => {
   if (isLoading) return <Spinner />;
   if (isError) return <div>Error: {error.message}</div>;
 
+  const properties = data?.properties || [];
+  const totalPages = data?.totalPages || 1;
+  const currentPage = data?.currentPage || 1;
+
   return (
     <div className="min-h-full w-full p-9 bg-[#d8d8d8] rounded-2xl">
       <div className="flex flex-col gap-4 w-full">
@@ -105,6 +111,8 @@ const PropertiesLists = () => {
           </div>
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="flex rounded-3xl p-2 focus:outline-none placeholder-black text-center"
             placeholder="Search here"
           />
@@ -125,48 +133,74 @@ const PropertiesLists = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.findProject?.map((property, index) => (
-                <tr key={index}>
-                  <td colSpan="4">
-                    <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
-                      <div className="py-2 w-1/4">{property?.propertyName}</div>
-                      <div className="py-2 w-1/4">{property?.city}</div>
-                      <div className="py-2 w-1/4">
-                        {property?.project?.projectName}
+              {properties.length ? (
+                properties.map((property, index) => (
+                  <tr key={index}>
+                    <td colSpan="4">
+                      <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
+                        <div className="py-2 w-1/4">
+                          {property?.propertyName}
+                        </div>
+                        <div className="py-2 w-1/4">{property?.city}</div>
+                        <div className="py-2 w-1/4">
+                          {property?.project?.projectName}
+                        </div>
+                        <div className="w-1/4 flex space-x-2">
+                          <button
+                            onClick={() => handleView(property._id)}
+                            className="text-black hover:text-blue-700"
+                          >
+                            <FiEye />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(property._id)}
+                            className="text-black hover:text-yellow-700"
+                          >
+                            <FiEdit2 />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(property._id)}
+                            className="text-black hover:text-red-700"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </div>
                       </div>
-                      <div className="w-1/4 flex space-x-2">
-                        <button
-                          onClick={() => handleView(property._id)}
-                          className="text-black hover:text-blue-700"
-                        >
-                          <FiEye />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(property._id)}
-                          className="text-black hover:text-yellow-700"
-                        >
-                          <FiEdit2 />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(property._id)}
-                          className="text-black hover:text-red-700"
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </div>
-                    </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="py-2 px-4 text-center text-black">
+                    No Properties Found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
         <div className="flex items-center mx-auto mt-3 gap-4 space-x-2 text-xl font-medium">
-          <button>&lt;&lt; Prev</button>
-          <button>Next &gt;&gt;</button>
+          <button
+            onClick={() => setPage((old) => Math.max(old - 1, 1))}
+            disabled={page === 1}
+            className="hover:cursor-pointer"
+          >
+            &lt;&lt; Prev
+          </button>
+          <button
+            onClick={() =>
+              setPage((old) => (page < totalPages ? old + 1 : old))
+            }
+            disabled={page === totalPages}
+            className="hover:cursor-pointer"
+          >
+            Next &gt;&gt;
+          </button>
         </div>
         <div className="p-4 font-medium mt-10">
-          <span>Showing 3 to 10 of 3 entries</span>
+          <span>
+            Showing {currentPage} to {totalPages} of {limit} entries
+          </span>
         </div>
       </div>
       {isModalOpen && (

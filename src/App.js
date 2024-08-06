@@ -3,6 +3,8 @@ import "./App.css";
 import { Login } from "./components/Page/Login";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import { Clients } from "./AdminDashboard/Clients/Clients";
+import {ClientsList} from "./AdminDashboard/Clients/ClientsList";
+import {UpdateClient} from "./AdminDashboard/Clients/UpdateClients"
 import { Master } from "./AdminDashboard/Masters/Master";
 import { Owners } from "./AdminDashboard/Owners/Owners";
 import { OwnersList } from "./AdminDashboard/Owners/OwnersList";
@@ -50,6 +52,22 @@ function App() {
           element={
             <AuthRoute adminOnly>
               <Clients />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="clientlist"
+          element={
+            <AuthRoute adminOnly>
+              <ClientsList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="update-client/:id"
+          element={
+            <AuthRoute adminOnly>
+              <UpdateClient />
             </AuthRoute>
           }
         />

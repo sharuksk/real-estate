@@ -12,8 +12,24 @@ const agentSchema = new mongoose.Schema({
     required: true,
     maxlength: 10,
   },
+  state: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  dob: {
+    type: Date,
+    required: true,
+  },
   address: {
     type: String,
+    required: true,
+  },
+  pinCode: {
+    type: Number,
     required: true,
   },
   email: {

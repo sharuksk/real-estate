@@ -4,7 +4,10 @@ import { Login } from "./components/Page/Login";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import { Clients } from "./AdminDashboard/Clients/Clients";
 import {ClientsList} from "./AdminDashboard/Clients/ClientsList";
-import {UpdateClient} from "./AdminDashboard/Clients/UpdateClients"
+import {UpdateClient} from "./AdminDashboard/Clients/UpdateClients";
+import { Agents } from "./AdminDashboard/Agents/Agents";
+import {AgentsList} from "./AdminDashboard/Agents/AgentsList";
+import {UpdateAgent} from "./AdminDashboard/Agents/UpdateAgents"
 import { Master } from "./AdminDashboard/Masters/Master";
 import { Owners } from "./AdminDashboard/Owners/Owners";
 import { OwnersList } from "./AdminDashboard/Owners/OwnersList";
@@ -68,6 +71,30 @@ function App() {
           element={
             <AuthRoute adminOnly>
               <UpdateClient />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="agents"
+          element={
+            <AuthRoute adminOnly>
+              <Agents />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="agentlist"
+          element={
+            <AuthRoute adminOnly>
+              <AgentsList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="update-agent/:id"
+          element={
+            <AuthRoute adminOnly>
+              <UpdateAgent />
             </AuthRoute>
           }
         />

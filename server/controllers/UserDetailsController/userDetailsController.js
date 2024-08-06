@@ -130,16 +130,12 @@ clients,   })
         qatarId,
         address,
         state,
-        occupation,
-        designation,
-        organization,
         dob,
-        preferredLanguage,
         city,
         pinCode,
-        source,
         commissionInfo,
-        licenseInfo
+        licenseInfo,
+        projects
       });
   
       await newAgent.save();
@@ -207,14 +203,11 @@ agents,   })
           qatarId,
           address,
           state,
-          occupation,
-          designation,
-          organization,
           dob,
-          preferredLanguage,
           city,
           pinCode,
           commissionInfo,
+          licenseInfo,
           projects
         },
         { new: true } 

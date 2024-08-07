@@ -1,24 +1,129 @@
-import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { AddProjectAPI } from "../../APIServices/projectAPI/projectAPI";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AllProjectsAPI } from "../../APIServices/projectAPI/projectAPI";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import {
+  EditPropertyAPI,
+  getPropertyAPI,
+} from "../../APIServices/propertyAPI/propertyAPI";
+import { AllAgentAPI } from "../../APIServices/usersAPI/usersAPI";
+import { getleadpropertytTypeAPI } from "../../APIServices/leadsAPI/leadsAPI";
+import { Spinner } from "../../common/Spinner";
+import { getAllAmenityAPI } from "../../APIServices/mastersAPI/amenityAPI";
+import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 
 const EditProperties = () => {
   const [formData, setFormData] = useState({});
+  const [imageUploadError, setImageUploadError] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const projectMutation = useMutation({
-    mutationKey: ["add-project"],
-    mutationFn: AddProjectAPI,
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["get-property"],
+    queryFn: () => getPropertyAPI(location?.state?.id),
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (data && data?.property) {
+      setFormData({
+        id: data?.property?._id,
+        propertyName: data?.property?.propertyName,
+        project: data?.property?.project?._id,
+        projectArea: data?.property?.projectArea,
+        referenceAgent: data?.property?.referenceAgent?._id,
+        price: data?.property?.price,
+        amenities: data?.property?.amenities?.map((amenty) => amenty._id),
+        propertyType: data?.property?.propertyType?._id,
+        propertyAge: data?.property?.propertyAge,
+        city: data?.property?.city,
+        loan: data?.property?.loan,
+        coverImage: data?.property?.coverImage,
+        description: data?.property?.description,
+      });
+    }
+  }, [data]);
+
+  //Fetch project
+  const {
+    data: ProjectData,
+    isLoading: ProjectLoading,
+    error: ProjectError,
+  } = useQuery({
+    queryKey: ["get-project"],
+    queryFn: AllProjectsAPI,
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+
+  //Fetch agent
+  const {
+    data: AgentData,
+    isLoading: agentsLoading,
+    error: agentsError,
+  } = useQuery({
+    queryKey: ["agent"],
+    queryFn: AllAgentAPI,
+    onSuccess: (data) => console.log("Fetched Agents:", data),
+    onError: (error) => console.error("Error fetching agents:", error),
+  });
+
+  // Fetch property types
+  const {
+    data: propertyTypesData,
+    isLoading: propertyTypesLoading,
+    error: propertyTypesError,
+  } = useQuery({
+    queryKey: ["propertyTypes"],
+    queryFn: getleadpropertytTypeAPI,
+    onSuccess: (data) => console.log("Fetched Property Types:", data),
+    onError: (error) => console.error("Error fetching property types:", error),
+  });
+
+  // Fetch amenties data
+
+  const {
+    data: AmentiesData,
+    isLoading: AmentiesLoading,
+    error: AmentiesError,
+  } = useQuery({
+    queryKey: ["amenities"],
+    queryFn: getAllAmenityAPI,
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+    onSuccess: (data) => console.log("Fetched amenties Types:", data),
+    onError: (error) => console.error("Error fetching amenties types:", error),
+  });
+
+  const updatePropertyMutation = useMutation({
+    mutationKey: ["update-project"],
+    mutationFn: EditPropertyAPI,
   });
 
   const handleChange = (e) => {
-    const { id, value, files } = e.target;
+    const { id, value, files, selectedOptions } = e.target;
     if (files) {
       setFormData({
         ...formData,
         [id]: files,
+      });
+    } else if (selectedOptions && id === "amenities") {
+      const valuesArray = Array.from(selectedOptions, (option) => option.value);
+      setFormData({
+        ...formData,
+        [id]: valuesArray,
+      });
+    } else if (id === "propertyAge" || id === "price") {
+      setFormData({
+        ...formData,
+        [id]: Number(value),
+      });
+    } else if (id === "loan") {
+      setFormData({
+        ...formData,
+        [id]: value === "true",
       });
     } else {
       setFormData({
@@ -28,18 +133,9 @@ const EditProperties = () => {
     }
   };
 
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loadingToastId = toast.loading("creating...", {
+    const loadingToastId = toast.loading("Updating...", {
       style: {
         backgroundColor: "#4a90e2",
         color: "white",
@@ -50,24 +146,25 @@ const EditProperties = () => {
       },
     });
 
-    const data = { ...formData };
+    let data = { ...formData };
 
-    if (formData.coverImage) {
-      data.coverImage = await fileToBase64(formData.coverImage[0]);
+    if (formData.coverImage && typeof formData.coverImage === "object") {
+      const downloadURL = await handleFileUpload(
+        formData.coverImage[0],
+        setImageUploadError,
+        loadingToastId
+      );
+      data = {
+        ...data,
+        coverImage: downloadURL,
+      };
     }
 
-    const AddData = new FormData();
-    AddData.append("projectName", data.projectName);
-    AddData.append("location", data.location);
-    AddData.append("area", data.area);
-    AddData.append("description", data.description);
-    AddData.append("coverImage", data.coverImage);
-
-    projectMutation
-      .mutateAsync(AddData)
+    updatePropertyMutation
+      .mutateAsync(data)
       .then((res) => {
         console.log(res);
-        toast.success(res.message, {
+        toast.success("Property Updated successfully", {
           style: {
             backgroundColor: "#34d399",
             color: "white",
@@ -78,11 +175,11 @@ const EditProperties = () => {
           },
         });
         toast.dismiss(loadingToastId);
-        navigate("/admin-dashboard/projects");
+        navigate("/admin-dashboard/properties");
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Add project Error: " + err.message, {
+        toast.error("Edit Property Error: " + err.message, {
           style: {
             backgroundColor: "#ef4444",
             color: "white",
@@ -95,6 +192,26 @@ const EditProperties = () => {
         toast.dismiss(loadingToastId);
       });
   };
+
+  if (
+    isLoading ||
+    ProjectLoading ||
+    agentsLoading ||
+    propertyTypesLoading ||
+    AmentiesLoading
+  )
+    return <Spinner />;
+  if (ProjectError)
+    return <div>Error fetching projects: {ProjectError.message}</div>;
+  if (agentsError)
+    return <div>Error fetching agents: {agentsError.message}</div>;
+  if (AmentiesError)
+    return <div>Error fetching amenties: {AmentiesError.message}</div>;
+  if (propertyTypesError)
+    return (
+      <div>Error fetching property types: {propertyTypesError.message}</div>
+    );
+  if (isError) return <div>Error: {error.message}</div>;
 
   return (
     <div className="min-h-full w-full p-9 bg-[#d8d8d8] rounded-2xl ">
@@ -109,7 +226,8 @@ const EditProperties = () => {
               type="text"
               className="flex w-[65%] rounded-3xl p-2 focus:outline-none"
               placeholder="Property Name"
-              id="projectName"
+              id="propertyName"
+              value={formData?.propertyName}
               onChange={handleChange}
             />
           </div>
@@ -117,10 +235,18 @@ const EditProperties = () => {
             <div className="space-y-5">
               <div className="flex flex-col md:flex-row w-full gap-7 items-start md:items-center">
                 <label className="font-semibold text-lg">Select Project</label>
-                <select className="flex w-1/2 rounded-3xl p-2">
+                <select
+                  id="project"
+                  value={formData?.project}
+                  onChange={handleChange}
+                  className="flex w-1/2 rounded-3xl p-2"
+                >
                   <option aria-disabled>Select Project</option>
-                  <option value="">Project 1</option>
-                  <option value="">Project 2</option>
+                  {ProjectData?.projects?.map((project) => (
+                    <option key={project._id} value={project._id}>
+                      {project.projectName}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col md:flex-row w-full gap-9 items-start md:items-center">
@@ -129,16 +255,25 @@ const EditProperties = () => {
                   type="text"
                   className=" w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Project Area (Sq.Ft)"
-                  id="area"
+                  id="projectArea"
+                  value={formData?.projectArea}
                   onChange={handleChange}
                 />
               </div>
               <div className="flex flex-col md:flex-row w-full gap-1 items-start md:items-center">
                 <label className="font-semibold text-lg">Reference Agent</label>
-                <select className="flex w-1/2 rounded-3xl p-2">
+                <select
+                  id="referenceAgent"
+                  value={formData?.referenceAgent}
+                  onChange={handleChange}
+                  className="flex w-1/2 rounded-3xl p-2"
+                >
                   <option aria-disabled>Reference Agent</option>
-                  <option value="">Agent 1</option>
-                  <option value="">Agent 2</option>
+                  {AgentData?.map((agent) => (
+                    <option key={agent._id} value={agent._id}>
+                      {agent.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col md:flex-row w-full gap-1 md:gap-24 items-start md:items-center">
@@ -147,26 +282,44 @@ const EditProperties = () => {
                   type="text"
                   className=" w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Price in USD"
-                  id="area"
+                  id="price"
+                  value={formData?.price}
                   onChange={handleChange}
                 />
               </div>
               <div className="flex flex-col md:flex-row w-full gap-1 md:gap-14 items-start md:items-center">
                 <label className="font-semibold text-lg">Amenties</label>
-                <select className="flex w-1/2 rounded-3xl p-2">
+                <select
+                  multiple
+                  id="amenities"
+                  value={formData?.amenities}
+                  onChange={handleChange}
+                  className="flex w-1/2 rounded-3xl p-2"
+                >
                   <option aria-disabled>Amenties</option>
-                  <option value="">Amenties 1</option>
-                  <option value="">Amenties 2</option>
+                  {AmentiesData?.amenities?.map((amenty) => (
+                    <option key={amenty._id} value={amenty._id}>
+                      {amenty.amenityname}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
             <div className="space-y-5">
               <div className="flex flex-col md:flex-row w-full gap-5 items-start md:items-center">
                 <label className="font-semibold text-lg">Property Type</label>
-                <select className="flex w-1/2 rounded-3xl p-2">
+                <select
+                  id="propertyType"
+                  value={formData?.propertyType}
+                  onChange={handleChange}
+                  className="flex w-1/2 rounded-3xl p-2"
+                >
                   <option aria-disabled> Property Type</option>
-                  <option value="">Project 1</option>
-                  <option value="">Project 2</option>
+                  {propertyTypesData?.propertyTypes?.map((property) => (
+                    <option key={property._id} value={property._id}>
+                      {property.propertyTypeName}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col md:flex-row w-full gap-7 items-start md:items-center">
@@ -175,7 +328,8 @@ const EditProperties = () => {
                   type="text"
                   className=" w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Property Age"
-                  id="area"
+                  id="propertyAge"
+                  value={formData?.propertyAge}
                   onChange={handleChange}
                 />
               </div>
@@ -185,7 +339,8 @@ const EditProperties = () => {
                   type="text"
                   className=" w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" City"
-                  id="area"
+                  id="city"
+                  value={formData?.city}
                   onChange={handleChange}
                 />
               </div>
@@ -193,10 +348,15 @@ const EditProperties = () => {
                 <label className="font-semibold text-lg">
                   Loan Availability
                 </label>
-                <select className="flex w-1/2 rounded-3xl p-2">
+                <select
+                  id="loan"
+                  value={formData?.loan}
+                  onChange={handleChange}
+                  className="flex w-1/2 rounded-3xl p-2"
+                >
                   <option aria-disabled> Loan Availability</option>
-                  <option value="">Yes</option>
-                  <option value="">No</option>
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
                 </select>
               </div>
               <div className="flex flex-col md:flex-row w-full gap-2 md:gap-20">
@@ -211,6 +371,9 @@ const EditProperties = () => {
                   <p>Images</p>
                 </label>
               </div>
+              {imageUploadError && (
+                <p className="text-red-700">Image upload error</p>
+              )}
             </div>
           </div>
           <div className="flex flex-col md:flex-row w-full gap-2 md:gap-0">
@@ -222,6 +385,7 @@ const EditProperties = () => {
               className="flex w-[65%] h-[100px] rounded-3xl p-2 focus:outline-none"
               placeholder=" Property Description"
               id="description"
+              value={formData?.description}
               onChange={handleChange}
             />
           </div>

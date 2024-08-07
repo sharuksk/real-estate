@@ -1,4 +1,5 @@
 const Project = require("../../models/RealEstate/Project");
+const Property = require("../../models/RealEstate/Property");
 
 exports.addProject = async (req, res) => {
   try {
@@ -120,7 +121,17 @@ exports.getProjectById = async (req, res) => {
 };
 exports.listAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projectss = await Project.find();
+
+    const projects = await Promise.all(
+      projectss.map(async (project) => {
+        const propertyCount = await Property.countDocuments({
+          project: project._id,
+        });
+        return { ...project.toObject(), propertyCount };
+      })
+    );
+
     return res.status(200).json({
       success: true,
       projects,
@@ -149,7 +160,7 @@ exports.getAllProjects = async (req, res) => {
     });
 
     // Fetch leads with pagination and search
-    const projects = await Project.find({
+    const projectss = await Project.find({
       projectName: { $regex: search, $options: "i" },
     })
       .skip(skip)
@@ -159,6 +170,15 @@ exports.getAllProjects = async (req, res) => {
     // Calculate totalPages and currentPage
     const totalPages = Math.ceil(total / parsedLimit);
     const currentPage = parsedPage;
+
+    const projects = await Promise.all(
+      projectss.map(async (project) => {
+        const propertyCount = await Property.countDocuments({
+          project: project._id,
+        });
+        return { ...project.toObject(), propertyCount };
+      })
+    );
 
     res.status(200).json({
       success: true,

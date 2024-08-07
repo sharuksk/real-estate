@@ -9,8 +9,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProjectModal } from "./ProjectModal";
+import { debounce } from "lodash";
+import TableList from "../../common/TableList";
 
 const ProjectLists = () => {
   const navigate = useNavigate();
@@ -91,6 +93,36 @@ const ProjectLists = () => {
       });
   };
 
+  const debouncedSearch = debounce((value) => {
+    setSearch(value);
+  }, 1000);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    debouncedSearch(value);
+  };
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const TableHeader = [
+    {
+      name: "Project Name",
+    },
+    {
+      name: "Location",
+    },
+    {
+      name: "Available Properties Count",
+    },
+    {
+      name: "Actions",
+    },
+  ];
+
   if (isLoading) return <Spinner />;
   if (isError) return <div>Error: {error.message}</div>;
 
@@ -99,120 +131,28 @@ const ProjectLists = () => {
   const currentPage = data?.currentPage || 1;
 
   return (
-    <div className="w-full p-4 bg-gray-300 rounded-2xl">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row sm:justify-between items-center mb-4 p-4 bg-white rounded-2xl">
-          <div className="flex items-center gap-2 mb-2 sm:mb-0">
-            <span className="text-xl bg-white p-2 rounded text-center">10</span>
-            <span className="text-sm sm:text-base">Records Per Page</span>
-          </div>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-72 md:w-96 lg:w-1/2 xl:w-1/3 rounded-3xl p-2 placeholder-black text-center"
-            placeholder="Search here"
-          />
-          <Link to={`/admin-dashboard/project/add`}>
-            <button className="bg-[#58ac3b] p-2 rounded-full mt-2 sm:mt-0">
-              Add Projects
-            </button>
-          </Link>
-        </div>
-        <div className="w-full bg-white rounded-2xl p-3 overflow-x-auto">
-          <table className="w-full table-fixed border-separate border-spacing-y-2">
-            <thead>
-              <tr>
-                <th className="pb-3 text-black font-medium text-left p-3">
-                  Project Name
-                </th>
-                <th className="pb-3 text-black font-medium text-left p-3">
-                  Location
-                </th>
-                <th className="pb-3 text-black font-medium text-left p-3">
-                  Available Properties Count
-                </th>
-
-                <th className="pb-3 text-black font-medium text-left p-3">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.length ? (
-                projects.map((project, index) => (
-                  <tr key={index}>
-                    <td colSpan="4">
-                      <div className="bg-[#d8d8d8] rounded-xl flex items-center p-2 justify-between">
-                        <div className="py-2 w-1/4">{project.projectName}</div>
-                        <div className="py-2 w-1/4">{project.location}</div>
-                        <div className="py-2 w-1/4">43</div>
-                        <div className="w-1/4 flex space-x-2">
-                          <button
-                            onClick={() => handleView(project._id)}
-                            className="text-black hover:text-blue-700"
-                          >
-                            <FiEye />
-                          </button>
-                          <button
-                            onClick={() => handleEdit(project._id)}
-                            className="text-black hover:text-yellow-700"
-                          >
-                            <FiEdit2 />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(project._id)}
-                            className="text-black hover:text-red-700"
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="py-2 px-4 text-center text-black">
-                    No Projects Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex items-center mx-auto mt-3 gap-4 space-x-2 text-xl font-medium">
-          <button
-            onClick={() => setPage((old) => Math.max(old - 1, 1))}
-            disabled={page === 1}
-            className="hover:cursor-pointer"
-          >
-            &lt;&lt; Prev
-          </button>
-          <button
-            onClick={() =>
-              setPage((old) => (page < totalPages ? old + 1 : old))
-            }
-            disabled={page === totalPages}
-            className="hover:cursor-pointer"
-          >
-            Next &gt;&gt;
-          </button>
-        </div>
-        <div className="p-4 font-medium mt-10">
-          <span>
-            Showing {currentPage} to {totalPages} of {limit} entries
-          </span>
-        </div>
-      </div>
-      {isModalOpen && (
-        <ProjectModal
-          isOpen={isModalOpen}
-          project={selectedProject}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
-    </div>
+    <>
+      <TableList
+        name={"project"}
+        search={search}
+        handleInputChange={handleInputChange}
+        buttonName={"Add Projects"}
+        buttonLink={"project/add"}
+        TableHeader={TableHeader}
+        TableData={projects}
+        handleView={handleView}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        limit={limit}
+        isModalOpen={isModalOpen}
+        setModalOpen={setModalOpen}
+        ModelData={selectedProject}
+      />
+    </>
   );
 };
 

@@ -8,13 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { app } from "../../firebase";
+import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 
 const EditProjects = () => {
   const navigate = useNavigate();
@@ -63,34 +57,6 @@ const EditProjects = () => {
     }
   };
 
-  const handleFileUpload = (file, loadingToastId) => {
-    return new Promise((resolve, reject) => {
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-        },
-        (error) => {
-          setImageUploadError(true);
-          toast.dismiss(loadingToastId);
-          reject(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
-        }
-      );
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loadingToastId = toast.loading("Editing...", {
@@ -109,6 +75,7 @@ const EditProjects = () => {
     if (formData.coverImage && typeof formData.coverImage === "object") {
       const downloadURL = await handleFileUpload(
         formData.coverImage[0],
+        setImageUploadError,
         loadingToastId
       );
       data = {

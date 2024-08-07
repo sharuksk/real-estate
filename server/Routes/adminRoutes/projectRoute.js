@@ -69,7 +69,7 @@ projectRouter.delete(
   adminMiddleware,
   deleteProperty
 );
-projectRouter.put(
+projectRouter.post(
   "/update-property/:id",
   isAuthenticated,
   adminMiddleware,

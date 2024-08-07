@@ -94,6 +94,9 @@ exports.updateProperty = async (req, res) => {
       amenities,
       loan,
       city,
+      projectArea,
+      propertyAge,
+      coverImage,
     } = req.body;
 
     const property = await Property.findById(id);
@@ -142,6 +145,9 @@ exports.updateProperty = async (req, res) => {
         amenities: amenities || property.amenities,
         loan: loan !== undefined ? loan : property.loan,
         city: city || property.city,
+        projectArea: projectArea || property.projectArea,
+        propertyAge: propertyAge || property.propertyAge,
+        coverImage: coverImage || property.coverImage,
       },
       { new: true }
     );

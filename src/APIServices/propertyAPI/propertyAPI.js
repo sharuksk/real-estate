@@ -21,16 +21,16 @@ export const getPropertyAPI = async (id) => {
   return response?.data;
 };
 
-// export const EditProjectAPI = async (data) => {
-//   const response = await axios.post(
-//     `${BASE_URL}/project/update-project`,
-//     data,
-//     {
-//       withCredentials: true,
-//     }
-//   );
-//   return response?.data;
-// };
+export const EditPropertyAPI = async (data) => {
+  const response = await axios.post(
+    `${BASE_URL}/project/update-property/${data.id}`,
+    data,
+    {
+      withCredentials: true,
+    }
+  );
+  return response?.data;
+};
 
 export const deletePropertyAPI = async (id) => {
   const response = await axios.delete(

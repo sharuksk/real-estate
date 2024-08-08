@@ -21,6 +21,14 @@ const profileSchema = new mongoose.Schema({
     type: Number,
     default: null
   },
+  // licenseInfo:{
+  //   type:String,
+  //   default:null,
+  // },
+  // comissionInfo:{
+  //   type:String,
+  //   default:null,
+  // }
 });
 
 module.exports = mongoose.model('Profile', profileSchema);

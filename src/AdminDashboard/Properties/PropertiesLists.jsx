@@ -1,5 +1,3 @@
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
-import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -10,7 +8,6 @@ import {
   getPropertyAPI,
 } from "../../APIServices/propertyAPI/propertyAPI";
 import { useEffect, useState } from "react";
-import { PropertyModal } from "./PropertyModal";
 import { debounce } from "lodash";
 import TableList from "../../common/TableList";
 

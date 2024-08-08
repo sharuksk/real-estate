@@ -1,5 +1,3 @@
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
-import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   deleteProjectAPI,
@@ -10,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
 import { useEffect, useState } from "react";
-import { ProjectModal } from "./ProjectModal";
 import { debounce } from "lodash";
 import TableList from "../../common/TableList";
 

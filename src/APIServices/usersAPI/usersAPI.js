@@ -38,3 +38,21 @@ export const AllAgentAPI = async () => {
   });
   return response?.data;
 };
+
+export const RegisterAPI = async (userData) => {
+  const response = await axios.post(`${BASE_URL}/user/register`, userData, {
+    withCredentials: true,
+  });
+  return response?.data;
+};
+
+export const AdminRegisterAPI = async (userData) => {
+  const response = await axios.post(
+    `${BASE_URL}/user/register-admin`,
+    userData,
+    {
+      withCredentials: true,
+    }
+  );
+  return response?.data;
+};

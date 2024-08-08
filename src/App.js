@@ -3,11 +3,11 @@ import "./App.css";
 import { Login } from "./components/Page/Login";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import { Clients } from "./AdminDashboard/Clients/Clients";
-import {ClientsList} from "./AdminDashboard/Clients/ClientsList";
-import {UpdateClient} from "./AdminDashboard/Clients/UpdateClients";
+import { ClientsList } from "./AdminDashboard/Clients/ClientsList";
+import { UpdateClient } from "./AdminDashboard/Clients/UpdateClients";
 import { Agents } from "./AdminDashboard/Agents/Agents";
-import {AgentsList} from "./AdminDashboard/Agents/AgentsList";
-import {UpdateAgent} from "./AdminDashboard/Agents/UpdateAgents"
+import { AgentsList } from "./AdminDashboard/Agents/AgentsList";
+import { UpdateAgent } from "./AdminDashboard/Agents/UpdateAgents";
 import { Master } from "./AdminDashboard/Masters/Master";
 import { Owners } from "./AdminDashboard/Owners/Owners";
 import { OwnersList } from "./AdminDashboard/Owners/OwnersList";
@@ -31,6 +31,7 @@ import AuthRoute from "./AuthRoute/AuthRoute";
 import PropertiesLists from "./AdminDashboard/Properties/PropertiesLists";
 import AddProperties from "./AdminDashboard/Properties/AddProperties";
 import EditProperties from "./AdminDashboard/Properties/EditProperties";
+import Register from "./components/Page/Register";
 
 function App() {
   const { isError, isLoading, data, error, isSuccess, refetch } = useQuery({
@@ -42,6 +43,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route
         path="/admin-dashboard"
         element={

@@ -21,7 +21,11 @@ const {
   getLeadPropertyType,
   getAllLeads,
 } = require("../../controllers/realEstateController/leadController");
-const { adminMiddleware } = require("../../middlewares/roleMiddleware");
+const {
+  adminMiddleware,
+  allowAdminAgentRole,
+  allowAnyRole,
+} = require("../../middlewares/roleMiddleware");
 const masterRouter = express.Router();
 //**Amenity  */
 masterRouter.post("/add-amenity", isAuthenticated, adminMiddleware, addAmenity);
@@ -37,12 +41,7 @@ masterRouter.get(
   adminMiddleware,
   listAmenity
 );
-masterRouter.get(
-  "/getAmenity",
-  isAuthenticated,
-  adminMiddleware,
-  getAllAmenities
-);
+masterRouter.get("/getAmenity", isAuthenticated, allowAnyRole, getAllAmenities);
 
 //**Source  */
 masterRouter.post("/add-source", isAuthenticated, adminMiddleware, addSource);
@@ -74,18 +73,28 @@ masterRouter.get(
   listPropertyType
 );
 //**Lead */
-masterRouter.post("/add-lead", isAuthenticated, adminMiddleware, createLead);
+masterRouter.post(
+  "/add-lead",
+  isAuthenticated,
+  allowAdminAgentRole,
+  createLead
+);
 masterRouter.delete(
   "/delete-lead/:id",
   isAuthenticated,
   adminMiddleware,
   deleteLead
 );
-masterRouter.get("/list-lead", isAuthenticated, adminMiddleware, getAllLeads);
+masterRouter.get(
+  "/list-lead",
+  isAuthenticated,
+  allowAdminAgentRole,
+  getAllLeads
+);
 masterRouter.get(
   "/get-lead/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminAgentRole,
   getLeadById
 );
 masterRouter.put(
@@ -99,13 +108,13 @@ masterRouter.put(
 masterRouter.get(
   "/list-leadsource",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminAgentRole,
   getLeadSource
 );
 masterRouter.get(
   "/list-type",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminAgentRole,
   getLeadPropertyType
 );
 

@@ -10,8 +10,11 @@ import { Spinner } from "../../common/Spinner";
 import { useEffect, useState } from "react";
 import { debounce } from "lodash";
 import TableList from "../../common/TableList";
+import { useSelector } from "react-redux";
 
 const ProjectLists = () => {
+  const { user } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -35,7 +38,11 @@ const ProjectLists = () => {
   });
 
   const handleEdit = (id) => {
-    navigate("/admin-dashboard/project/edit", { state: { id } });
+    if (user?.role) {
+      toast.error(`${user?.role} can only add Projects`);
+    } else {
+      navigate("/admin-dashboard/project/edit", { state: { id } });
+    }
   };
 
   const handleView = async (id) => {
@@ -50,44 +57,48 @@ const ProjectLists = () => {
   };
 
   const handleDelete = (id) => {
-    const loadingToastId = toast.loading("Deleting...", {
-      style: {
-        backgroundColor: "#4a90e2",
-        color: "white",
-        borderRadius: "0.375rem",
-        padding: "0.75rem 1.25rem",
-        fontSize: "0.875rem",
-        fontWeight: "bold",
-      },
-    });
-    deleteMutation
-      .mutateAsync(id)
-      .then((res) => {
-        toast.success(res.message, {
-          style: {
-            backgroundColor: "#34d399",
-            color: "white",
-            borderRadius: "0.375rem",
-            padding: "0.75rem 1.25rem",
-            fontSize: "0.875rem",
-            fontWeight: "bold",
-          },
-        });
-        toast.dismiss(loadingToastId);
-      })
-      .catch((err) => {
-        toast.error("Delete project Error: " + err.message, {
-          style: {
-            backgroundColor: "#ef4444",
-            color: "white",
-            borderRadius: "0.375rem",
-            padding: "0.75rem 1.25rem",
-            fontSize: "0.875rem",
-            fontWeight: "bold",
-          },
-        });
-        toast.dismiss(loadingToastId);
+    if (user?.role) {
+      toast.error(`${user?.role} can only add Projects`);
+    } else {
+      const loadingToastId = toast.loading("Deleting...", {
+        style: {
+          backgroundColor: "#4a90e2",
+          color: "white",
+          borderRadius: "0.375rem",
+          padding: "0.75rem 1.25rem",
+          fontSize: "0.875rem",
+          fontWeight: "bold",
+        },
       });
+      deleteMutation
+        .mutateAsync(id)
+        .then((res) => {
+          toast.success(res.message, {
+            style: {
+              backgroundColor: "#34d399",
+              color: "white",
+              borderRadius: "0.375rem",
+              padding: "0.75rem 1.25rem",
+              fontSize: "0.875rem",
+              fontWeight: "bold",
+            },
+          });
+          toast.dismiss(loadingToastId);
+        })
+        .catch((err) => {
+          toast.error("Delete project Error: " + err.message, {
+            style: {
+              backgroundColor: "#ef4444",
+              color: "white",
+              borderRadius: "0.375rem",
+              padding: "0.75rem 1.25rem",
+              fontSize: "0.875rem",
+              fontWeight: "bold",
+            },
+          });
+          toast.dismiss(loadingToastId);
+        });
+    }
   };
 
   const debouncedSearch = debounce((value) => {
@@ -148,6 +159,7 @@ const ProjectLists = () => {
         isModalOpen={isModalOpen}
         setModalOpen={setModalOpen}
         ModelData={selectedProject}
+        user={user}
       />
     </>
   );

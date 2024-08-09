@@ -90,8 +90,22 @@ exports.register = async (req, res) => {
       additionalDetails: profileDetails._id,
     });
 
-    return res.status(200).json({
+    const token = jwt.sign(
+      { email: newUser.email, id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    };
+
+    return res.cookie("token", token, options).status(200).json({
       success: true,
+      token,
       user: newUser,
       message: "User registered successfully",
     });

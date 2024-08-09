@@ -10,8 +10,11 @@ import {
 import { useEffect, useState } from "react";
 import { debounce } from "lodash";
 import TableList from "../../common/TableList";
+import { useSelector } from "react-redux";
 
 const PropertiesLists = () => {
+  const { user } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -35,7 +38,11 @@ const PropertiesLists = () => {
   });
 
   const handleEdit = (id) => {
-    navigate("/admin-dashboard/properties/edit", { state: { id } });
+    if (user?.role) {
+      toast.error(`${user?.role} can only add Properties`);
+    } else {
+      navigate("/admin-dashboard/properties/edit", { state: { id } });
+    }
   };
 
   const handleView = async (id) => {
@@ -50,46 +57,50 @@ const PropertiesLists = () => {
   };
 
   const handleDelete = (id) => {
-    const loadingToastId = toast.loading("deleting...", {
-      style: {
-        backgroundColor: "#4a90e2",
-        color: "white",
-        borderRadius: "0.375rem",
-        padding: "0.75rem 1.25rem",
-        fontSize: "0.875rem",
-        fontWeight: "bold",
-      },
-    });
-    deleteMutation
-      .mutateAsync(id)
-      .then((res) => {
-        console.log(res);
-        toast.success(res.message, {
-          style: {
-            backgroundColor: "#34d399",
-            color: "white",
-            borderRadius: "0.375rem",
-            padding: "0.75rem 1.25rem",
-            fontSize: "0.875rem",
-            fontWeight: "bold",
-          },
-        });
-        toast.dismiss(loadingToastId);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Delete project Error: " + err.message, {
-          style: {
-            backgroundColor: "#ef4444",
-            color: "white",
-            borderRadius: "0.375rem",
-            padding: "0.75rem 1.25rem",
-            fontSize: "0.875rem",
-            fontWeight: "bold",
-          },
-        });
-        toast.dismiss(loadingToastId);
+    if (user?.role) {
+      toast.error(`${user?.role} can only add Properties`);
+    } else {
+      const loadingToastId = toast.loading("deleting...", {
+        style: {
+          backgroundColor: "#4a90e2",
+          color: "white",
+          borderRadius: "0.375rem",
+          padding: "0.75rem 1.25rem",
+          fontSize: "0.875rem",
+          fontWeight: "bold",
+        },
       });
+      deleteMutation
+        .mutateAsync(id)
+        .then((res) => {
+          console.log(res);
+          toast.success(res.message, {
+            style: {
+              backgroundColor: "#34d399",
+              color: "white",
+              borderRadius: "0.375rem",
+              padding: "0.75rem 1.25rem",
+              fontSize: "0.875rem",
+              fontWeight: "bold",
+            },
+          });
+          toast.dismiss(loadingToastId);
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Delete project Error: " + err.message, {
+            style: {
+              backgroundColor: "#ef4444",
+              color: "white",
+              borderRadius: "0.375rem",
+              padding: "0.75rem 1.25rem",
+              fontSize: "0.875rem",
+              fontWeight: "bold",
+            },
+          });
+          toast.dismiss(loadingToastId);
+        });
+    }
   };
 
   const debouncedSearch = debounce((value) => {
@@ -150,6 +161,7 @@ const PropertiesLists = () => {
         isModalOpen={isModalOpen}
         setModalOpen={setModalOpen}
         ModelData={selectedProperty}
+        user={user}
       />
     </>
   );

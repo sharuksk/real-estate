@@ -126,8 +126,8 @@ const EditProjects = () => {
         <div className="flex justify-between bg-white rounded-2xl p-4 mb-4 font-semibold text-2xl">
           <div>Edit Projects</div>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          <div className="flex flex-col md:flex-row w-full gap-14 items-start md:items-center">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-8">
+          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-14 items-start md:items-center">
             <label className="font-semibold text-lg">Project Name</label>
             <input
               type="text"
@@ -139,7 +139,7 @@ const EditProjects = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-col md:flex-row w-full gap-9 items-start md:items-center">
+            <div className="flex flex-col md:flex-row w-full gap-4 md:gap-9 items-start md:items-center">
               <label className="font-semibold text-lg">Project Location</label>
               <input
                 type="text"
@@ -169,15 +169,15 @@ const EditProjects = () => {
             </label>
             <textarea
               type="text"
-              className="flex w-1/4 h-[150px] rounded-3xl p-2 focus:outline-none"
+              className="flex w-1/2 md:w-1/4 h-[150px] rounded-3xl p-2 focus:outline-none"
               placeholder=" Project Description"
               id="description"
               value={formData?.description}
               onChange={handleChange}
             />
           </div>
-          <div className="flex flex-col md:flex-row w-full gap-4">
-            <div className="flex gap-28">
+          <div className="flex flex-row w-full gap-4">
+            <div className="flex gap-4 md:gap-28">
               <label className="font-semibold text-lg mt-2">Images</label>
               <label className="bg-[#cfa8f6] p-3 rounded-[300px] cursor-pointer">
                 <input
@@ -197,7 +197,7 @@ const EditProjects = () => {
             <p className="text-red-700">Image upload error</p>
           )}
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-col md:flex-row w-full gap-32 items-start md:items-center">
+            <div className="flex flex-col md:flex-row w-full gap-4 md:gap-32 items-start md:items-center">
               <label className="font-semibold text-lg"> User</label>
               <input
                 type="text"
@@ -206,7 +206,7 @@ const EditProjects = () => {
                 disabled
               />
             </div>
-            <div className="flex flex-col md:flex-row w-full gap-20 items-start md:items-center">
+            <div className="flex flex-col md:flex-row w-full gap-4 md:gap-20 items-start md:items-center">
               <label className="font-semibold text-lg"> Time</label>
               <input
                 type="text"
@@ -216,7 +216,7 @@ const EditProjects = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col md:flex-row mx-auto gap-16">
+          <div className="flex flex-col md:flex-row mx-auto gap-5 md:gap-16">
             <button className="flex py-2 bg-[#58ac3b] rounded-full px-12 text-white">
               Submit
             </button>

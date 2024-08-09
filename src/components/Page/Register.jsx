@@ -130,7 +130,7 @@ const Register = () => {
           });
           dispatch(setUser(res.user));
           toast.dismiss(loadingToastId);
-          navigate("/admin-dashboard");
+          navigate("/onboarding");
         })
         .catch((err) => {
           toast.error(`${formData?.role} Register Error: ` + err.message, {

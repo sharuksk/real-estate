@@ -8,8 +8,14 @@ const {
   getAllAgent,
 } = require("../../controllers/AdminControllers/AdminController");
 const { isAuthenticated } = require("../../middlewares/isAuthenticated");
-const { updateDetails, getAllUserDetails } = require("../../controllers/AdditionalDetailsController/Profile");
-const { clientMiddleware, agentMiddleware } = require("../../middlewares/roleMiddleware");
+const {
+  updateDetails,
+  getAllUserDetails,
+} = require("../../controllers/AdditionalDetailsController/Profile");
+const {
+  clientMiddleware,
+  agentMiddleware,
+} = require("../../middlewares/roleMiddleware");
 const usersRouter = express.Router();
 usersRouter.post("/register", register);
 usersRouter.post("/login", login);
@@ -20,7 +26,18 @@ usersRouter.get("/checkAuth", isAuthenticated, checkAuthenticated);
 usersRouter.get("/getAgent", getAllAgent);
 
 //Route for Onboarding Form
-usersRouter.post("/update-profile",isAuthenticated,clientMiddleware,agentMiddleware,updateDetails)
-usersRouter.get("/get-profile",isAuthenticated,clientMiddleware,agentMiddleware,getAllUserDetails)
+usersRouter.post(
+  "/update-profile",
+  isAuthenticated,
+  agentMiddleware,
+  updateDetails
+);
+usersRouter.get(
+  "/get-profile",
+  isAuthenticated,
+  clientMiddleware,
+  agentMiddleware,
+  getAllUserDetails
+);
 
 module.exports = usersRouter;

@@ -9,8 +9,11 @@ import { AddPropertiesAPI } from "../../APIServices/propertyAPI/propertyAPI";
 import { AllAgentAPI } from "../../APIServices/usersAPI/usersAPI";
 import { Spinner } from "../../common/Spinner";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
+import { useSelector } from "react-redux";
 
 const AddProperties = () => {
+  const { user } = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({});
   const [imageUploadError, setImageUploadError] = useState(false);
   console.log(formData);
@@ -108,6 +111,26 @@ const AddProperties = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.propertyName) return toast.error("Property Name is required");
+
+    if (!formData.project) return toast.error("Project is required");
+
+    if (!formData.projectArea) return toast.error("Project Area is required");
+
+    if (!formData.price) return toast.error("Price is required");
+
+    if (!formData.propertyType) return toast.error("Property Type is required");
+
+    if (!formData.propertyAge) return toast.error("Property Age is required");
+
+    if (!formData.city) return toast.error("City is required");
+
+    if (!formData.description)
+      return toast.error("Project Description is required");
+
+    if (!formData.coverImage) return toast.error("Project Image is required");
+
     const loadingToastId = toast.loading("creating...", {
       style: {
         backgroundColor: "#4a90e2",
@@ -183,7 +206,11 @@ const AddProperties = () => {
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between bg-white rounded-2xl p-4 mb-4 font-semibold text-2xl">
           <div>Add Properties</div>
-          <Link to={`/admin-dashboard/properties`}>
+          <Link
+            to={`/${
+              user?.role ? user?.role.toLowerCase() : "admin"
+            }-dashboard/properties`}
+          >
             <button className="bg-[#7ca7ac] px-4 rounded-xl hidden md:block">
               Properties List
             </button>

@@ -22,6 +22,7 @@ const TableList = ({
   isModalOpen,
   setModalOpen,
   ModelData,
+  user,
 }) => {
   return (
     <section className="py-8 bg-gray-300 rounded-3xl">
@@ -41,7 +42,11 @@ const TableList = ({
                 className="p-2 border rounded-3xl w-full text-center"
               />
             </form>
-            <Link to={`/admin-dashboard/${buttonLink}`}>
+            <Link
+              to={`/${
+                user?.role ? user?.role.toLowerCase() : "admin"
+              }-dashboard/${buttonLink}`}
+            >
               <button className="bg-[#58ac3b] p-2 rounded-full mt-2  mr-4 sm:mt-0">
                 {buttonName}
               </button>

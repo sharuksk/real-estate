@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import { Login } from "./components/Page/Login";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
@@ -32,8 +32,14 @@ import PropertiesLists from "./AdminDashboard/Properties/PropertiesLists";
 import AddProperties from "./AdminDashboard/Properties/AddProperties";
 import EditProperties from "./AdminDashboard/Properties/EditProperties";
 import Register from "./components/Page/Register";
+import AgentForm from "./AgentsDashboard/OnBoardingForm/AgentForm";
+import { useSelector } from "react-redux";
+import AgentDash from "./AgentsDashboard/Dashboard/index";
+import AgentDashboard from "./AgentsDashboard/AgentDashboard";
 
 function App() {
+  const { user } = useSelector((state) => state.user);
+
   const { isError, isLoading, data, error, isSuccess, refetch } = useQuery({
     queryKey: ["user-auth"],
   });
@@ -44,6 +50,25 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/onboarding" element={<AgentForm />} />
+      <Route
+        path="/agent-dashboard"
+        element={
+          user?.role === "Agent" ? <AgentDashboard /> : <Navigate to="/" />
+        }
+      >
+        <Route path="" element={<AgentDash />} />
+        <Route path="clients" element={<Clients />} />
+        <Route path="clientlist" element={<ClientsList />} />
+        <Route path="update-client/:id" element={<UpdateClient />} />
+        <Route path="leads" element={<Lead />} />
+        <Route path="leadlist" element={<LeadList />} />
+        <Route path="update-lead/:id" element={<UpdateLead />} />
+        <Route path="project/add" element={<AddProjects />} />
+        <Route path="projects" element={<ProjectLists />} />
+        <Route path="properties" element={<PropertiesLists />} />
+        <Route path="properties/add" element={<AddProperties />} />
+      </Route>
       <Route
         path="/admin-dashboard"
         element={

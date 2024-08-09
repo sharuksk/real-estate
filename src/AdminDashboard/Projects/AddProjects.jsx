@@ -4,8 +4,11 @@ import { AddProjectAPI } from "../../APIServices/projectAPI/projectAPI";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
+import { useSelector } from "react-redux";
 
 const AddProjects = () => {
+  const { user } = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({});
   const [imageUploadError, setImageUploadError] = useState(false);
   const navigate = useNavigate();
@@ -32,6 +35,16 @@ const AddProjects = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.projectName) return toast.error("Project Name is required");
+
+    if (!formData.location) return toast.error("Project Loaction is required");
+
+    if (!formData.area) return toast.error("Project Area is required");
+
+    if (!formData.description)
+      return toast.error("Project description is required");
+
     const loadingToastId = toast.loading("creating...", {
       style: {
         backgroundColor: "#4a90e2",
@@ -51,6 +64,11 @@ const AddProjects = () => {
         setImageUploadError,
         loadingToastId
       );
+
+      if (downloadURL) {
+        toast.success("Image upload successfully");
+      }
+
       data = {
         ...data,
         coverImage: downloadURL,
@@ -72,7 +90,12 @@ const AddProjects = () => {
           },
         });
         toast.dismiss(loadingToastId);
-        navigate("/admin-dashboard/projects");
+        // navigate("/admin-dashboard/projects");
+        navigate(
+          `/${
+            user?.role ? user?.role.toLowerCase() : "admin"
+          }-dashboard/projects`
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -95,7 +118,11 @@ const AddProjects = () => {
       <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between bg-white rounded-2xl p-4 mb-4 font-semibold text-lg md:text-2xl">
           <div>Add Projects</div>
-          <Link to={`/admin-dashboard/projects`}>
+          <Link
+            to={`/${
+              user?.role ? user?.role.toLowerCase() : "admin"
+            }-dashboard/projects`}
+          >
             <button className="bg-[#7ca7ac] px-4 rounded-xl hidden md:block">
               Projects List
             </button>

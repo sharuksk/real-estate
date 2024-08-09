@@ -16,15 +16,13 @@ const {
   getAllProperties,
 } = require("../../controllers/ProjectController/propertiesController");
 const { isAuthenticated } = require("../../middlewares/isAuthenticated");
-const { adminMiddleware } = require("../../middlewares/roleMiddleware");
+const {
+  adminMiddleware,
+  allowAnyRole,
+} = require("../../middlewares/roleMiddleware");
 const projectRouter = express.Router();
 //Projects
-projectRouter.post(
-  "/add-project",
-  isAuthenticated,
-  adminMiddleware,
-  addProject
-);
+projectRouter.post("/add-project", isAuthenticated, allowAnyRole, addProject);
 projectRouter.post(
   "/update-project",
   isAuthenticated,
@@ -40,29 +38,24 @@ projectRouter.delete(
 projectRouter.get(
   "/get-project",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   listAllProjects
 );
 projectRouter.get(
   "/getAllproject",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   getAllProjects
 );
 projectRouter.get(
   "/get-project/:projectId",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   getProjectById
 );
 
 //Properties//
-projectRouter.post(
-  "/add-property",
-  isAuthenticated,
-  adminMiddleware,
-  addProperty
-);
+projectRouter.post("/add-property", isAuthenticated, allowAnyRole, addProperty);
 projectRouter.delete(
   "/delete-property/:propertyId",
   isAuthenticated,
@@ -84,13 +77,13 @@ projectRouter.get(
 projectRouter.get(
   "/getAllProperty",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   getAllProperties
 );
 projectRouter.get(
   "/get-property/:propertyId",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   getPropertyById
 );
 

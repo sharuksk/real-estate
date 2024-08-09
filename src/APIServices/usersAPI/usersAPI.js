@@ -57,5 +57,11 @@ export const AdminRegisterAPI = async (userData) => {
   return response?.data;
 };
 
-
 //OnBoardingFormAPI//
+
+export const OnBoardingAPI = async (data) => {
+  const response = await axios.post(`${BASE_URL}/user/update-profile`, data, {
+    withCredentials: true,
+  });
+  return response?.data;
+};

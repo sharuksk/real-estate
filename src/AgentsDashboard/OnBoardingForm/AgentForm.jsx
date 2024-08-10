@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Input from "../../common/Input";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { OnBoardingAPI } from "../../APIServices/usersAPI/usersAPI";
 import { toast } from "react-hot-toast";
@@ -10,13 +10,6 @@ const AgentForm = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [formData, setFormData] = useState([]);
-
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      id: user?._id,
-    });
-  }, []);
 
   const onBoardingMutation = useMutation({
     mutationKey: ["update-profile"],

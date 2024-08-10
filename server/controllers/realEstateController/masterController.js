@@ -200,6 +200,35 @@ exports.listSource = async (req, res) => {
     });
   }
 };
+
+exports.getAllSource = async (req, res) => {
+  try {
+    const { Id } = req.params;
+    console.log(Id);
+
+    const source = await sourceSchema.findById(Id);
+
+    if (!source) {
+      return res.status(404).json({
+        success: false,
+        message: "source Not Found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      source,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 //Property Type Schema ///
 exports.addPropertyType = async (req, res) => {
   try {
@@ -288,6 +317,34 @@ exports.listPropertyType = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Unexpected Error",
+    });
+  }
+};
+
+exports.getAllPropertyType = async (req, res) => {
+  try {
+    const { Id } = req.params;
+    console.log(Id);
+
+    const property = await propertyType.findById(Id);
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "propertyType Not Found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      property,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
     });
   }
 };

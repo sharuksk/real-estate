@@ -97,6 +97,26 @@ const allowAdminAgentRole = (req, res, next) => {
   }
 };
 
+const allowAdminOwnerRole = (req, res, next) => {
+  // console.log("User object:", req.user);
+  //   console.log("User role:", req.user?.role);
+  if (
+    req.user &&
+    (req.user.role === "Admin" ||
+      (req.user.role && req.user.role.includes("Admin")))
+  ) {
+    return next();
+  } else if (
+    req.user &&
+    (req.user.role === "Owner" ||
+      (req.user.role && req.user.role.includes("Owner")))
+  ) {
+    return next();
+  } else {
+    return res.status(403).json({ message: "Access Denied..." });
+  }
+};
+
 module.exports = {
   clientMiddleware,
   adminMiddleware,
@@ -104,4 +124,5 @@ module.exports = {
   ownerMiddleware,
   allowAnyRole,
   allowAdminAgentRole,
+  allowAdminOwnerRole,
 };

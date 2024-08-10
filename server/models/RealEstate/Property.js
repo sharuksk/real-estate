@@ -54,6 +54,14 @@ const propertySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  createdByUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  createdByAdmin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+  },
 });
 
 module.exports = mongoose.model("Property", propertySchema);

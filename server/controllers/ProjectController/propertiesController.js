@@ -18,6 +18,8 @@ exports.addProperty = async (req, res) => {
       projectArea,
       propertyAge,
       coverImage,
+      createdById,
+      createdByType,
     } = req.body;
 
     const [
@@ -43,7 +45,7 @@ exports.addProperty = async (req, res) => {
     if (amenities.length && amenitiesExists.some((amenity) => !amenity))
       return res.status(400).json({ error: "One or more Amenities not found" });
 
-    const property = new Property({
+    let newPropertiesData = {
       description,
       propertyName,
       project,
@@ -56,7 +58,15 @@ exports.addProperty = async (req, res) => {
       projectArea,
       propertyAge,
       coverImage,
-    });
+    };
+
+    if (createdByType === "User") {
+      newPropertiesData.createdByUser = createdById;
+    } else if (createdByType === "Admin") {
+      newPropertiesData.createdByAdmin = createdById;
+    }
+
+    const property = new Property(newPropertiesData);
 
     await property.save();
 
@@ -184,7 +194,7 @@ exports.getPropertyById = async (req, res) => {
   try {
     const { propertyId } = req.params;
     const property = await Property.findById(propertyId).populate(
-      "project referenceAgent amenities propertyType"
+      "project referenceAgent amenities propertyType createdByUser"
     );
 
     if (!property) {

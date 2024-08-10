@@ -36,6 +36,8 @@ import AgentForm from "./AgentsDashboard/OnBoardingForm/AgentForm";
 import { useSelector } from "react-redux";
 import AgentDash from "./AgentsDashboard/Dashboard/index";
 import AgentDashboard from "./AgentsDashboard/AgentDashboard";
+import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
+import OwnerDash from "./OwnerDashboard/Dashboard/index";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -65,9 +67,29 @@ function App() {
         <Route path="leadlist" element={<LeadList />} />
         <Route path="update-lead/:id" element={<UpdateLead />} />
         <Route path="project/add" element={<AddProjects />} />
+        <Route path="project/edit" element={<EditProjects />} />
         <Route path="projects" element={<ProjectLists />} />
         <Route path="properties" element={<PropertiesLists />} />
         <Route path="properties/add" element={<AddProperties />} />
+        <Route path="properties/edit" element={<EditProperties />} />
+      </Route>
+      <Route
+        path="/owner-dashboard"
+        element={
+          user?.role === "Owner" ? <OwnerDashboard /> : <Navigate to="/" />
+        }
+      >
+        <Route path="" element={<OwnerDash />} />
+        <Route path="project/add" element={<AddProjects />} />
+        <Route path="project/edit" element={<EditProjects />} />
+        <Route path="projects" element={<ProjectLists />} />
+        <Route path="properties" element={<PropertiesLists />} />
+        <Route path="properties/add" element={<AddProperties />} />
+        <Route path="properties/edit" element={<EditProperties />} />
+        <Route path="masters" element={<Master />} />
+        <Route path="addamenity" element={<Amenity />} />
+        <Route path="addsource" element={<Source />} />
+        <Route path="addtype" element={<PropertyType />} />
       </Route>
       <Route
         path="/admin-dashboard"

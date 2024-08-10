@@ -9,8 +9,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Spinner } from "../../common/Spinner";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
+import { useSelector } from "react-redux";
 
 const EditProjects = () => {
+  const { user } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -99,7 +102,11 @@ const EditProjects = () => {
           },
         });
         toast.dismiss(loadingToastId);
-        navigate("/admin-dashboard/projects");
+        navigate(
+          `/${
+            user?.role ? user?.role?.toLowerCase() : "admin"
+          }-dashboard/projects`
+        );
       })
       .catch((err) => {
         console.log(err);

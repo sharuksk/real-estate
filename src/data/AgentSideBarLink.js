@@ -1,12 +1,9 @@
 import {
   VscDashboard,
-  //   VscAccount,
-  //   VscPerson,
   VscProject,
   VscHome,
   VscIssueReopened,
   VscMegaphone,
-  //   VscSettingsGear,
 } from "react-icons/vsc";
 
 export const sidebarLinks = [
@@ -20,7 +17,11 @@ export const sidebarLinks = [
   {
     id: 2,
     path: "/agent-dashboard/clients",
-    activePath: ["/agent-dashboard/clients"],
+    activePath: [
+      "/agent-dashboard/clients",
+      "/agent-dashboard/clientlist",
+      "/agent-dashboard/update-client/:id",
+    ],
     name: "Clients",
     icon: VscIssueReopened,
   },

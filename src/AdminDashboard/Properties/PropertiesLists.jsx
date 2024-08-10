@@ -37,9 +37,16 @@ const PropertiesLists = () => {
     },
   });
 
-  const handleEdit = (id) => {
+  const handleEdit = async (id) => {
     if (user?.role) {
-      toast.error(`${user?.role} can only add Properties`);
+      const property = await getPropertyAPI(id);
+      if (user?._id === property?.property?.createdByUser?._id) {
+        navigate(`/${user?.role?.toLowerCase()}-dashboard/properties/edit`, {
+          state: { id },
+        });
+      } else {
+        toast.error(`${user?.role} can only Edit their own Properties`);
+      }
     } else {
       navigate("/admin-dashboard/properties/edit", { state: { id } });
     }
@@ -56,10 +63,9 @@ const PropertiesLists = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    if (user?.role) {
-      toast.error(`${user?.role} can only add Properties`);
-    } else {
+  const handleDelete = async (id) => {
+    const property = await getPropertyAPI(id);
+    const deleteProperty = (deleteMutation, id) => {
       const loadingToastId = toast.loading("deleting...", {
         style: {
           backgroundColor: "#4a90e2",
@@ -100,6 +106,15 @@ const PropertiesLists = () => {
           });
           toast.dismiss(loadingToastId);
         });
+    };
+    if (user?._id) {
+      if (user?._id !== property?.property?.createdByUser?._id) {
+        toast.error(`${user?.role} can only Delete their own Properties`);
+      } else {
+        deleteProperty(deleteMutation, id);
+      }
+    } else {
+      deleteProperty(deleteMutation, id);
     }
   };
 

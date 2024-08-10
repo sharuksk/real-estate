@@ -12,7 +12,7 @@ import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 import { useSelector } from "react-redux";
 
 const AddProperties = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, admin } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({});
   const [imageUploadError, setImageUploadError] = useState(false);
@@ -153,14 +153,15 @@ const AddProperties = () => {
       data = {
         ...data,
         coverImage: downloadURL,
+        createdById: user?._id ? user?._id : admin?._id,
+        createdByType: user?._id ? "User" : "Admin",
       };
     }
 
     propertiesMutation
       .mutateAsync(data)
-      .then((res) => {
-        console.log(res);
-        toast.success(res.message, {
+      .then(() => {
+        toast.success("property created successfully", {
           style: {
             backgroundColor: "#34d399",
             color: "white",
@@ -171,7 +172,11 @@ const AddProperties = () => {
           },
         });
         toast.dismiss(loadingToastId);
-        navigate("/admin-dashboard/properties");
+        navigate(
+          `/${
+            user?.role ? user?.role?.toLowerCase() : "admin"
+          }-dashboard/properties`
+        );
       })
       .catch((err) => {
         console.log(err);

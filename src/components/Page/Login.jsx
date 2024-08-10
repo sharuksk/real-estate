@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginAPI } from "../../APIServices/usersAPI/usersAPI";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/slices/userSlice";
+import { setAdmin, setUser } from "../../redux/slices/userSlice";
 export const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -15,11 +15,30 @@ export const Login = () => {
     mutationFn: loginAPI,
   });
 
+  const Roles = [
+    {
+      id: 1,
+      type: "Admin",
+    },
+    {
+      id: 2,
+      type: "Client",
+    },
+    {
+      id: 3,
+      type: "Owner",
+    },
+    {
+      id: 4,
+      type: "Agent",
+    },
+  ];
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
-      role: "",
+      role: "Admin",
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -57,8 +76,9 @@ export const Login = () => {
           toast.dismiss(loadingToastId);
           if (res?.user?.role !== "Admin") {
             dispatch(setUser(res?.user));
-            navigate("/agent-dashboard");
+            navigate(`/${res?.user?.role?.toLowerCase()}-dashboard`);
           } else {
+            dispatch(setAdmin(res?.user));
             navigate("/admin-dashboard");
           }
         })
@@ -78,8 +98,6 @@ export const Login = () => {
         });
     },
   });
-
-  console.log(userMutation);
 
   return (
     <div className="min-h-screen bg-green-700 flex items-center justify-center">
@@ -142,12 +160,17 @@ export const Login = () => {
             >
               Role
             </label>
-            <input
-              type="text"
+            <select
               id="role"
               {...formik.getFieldProps("role")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-indigo-500"
-            />
+            >
+              {Roles.map((role) => (
+                <option key={role.id} value={role.type}>
+                  {role.type}
+                </option>
+              ))}
+            </select>
             {formik.touched.role && formik.errors.role && (
               <div className="text-red-500 mt-1">{formik.errors.role}</div>
             )}

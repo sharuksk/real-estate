@@ -37,9 +37,18 @@ const ProjectLists = () => {
     },
   });
 
-  const handleEdit = (id) => {
+  const handleEdit = async (id) => {
+    console.log(id);
+
     if (user?.role) {
-      toast.error(`${user?.role} can only add Projects`);
+      const project = await getProjectAPI(id);
+      if (user?._id === project?.project?.createdByUser?._id) {
+        navigate(`/${user?.role?.toLowerCase()}-dashboard/project/edit`, {
+          state: { id },
+        });
+      } else {
+        toast.error(`${user?.role} can only Edit their own Projects`);
+      }
     } else {
       navigate("/admin-dashboard/project/edit", { state: { id } });
     }
@@ -56,10 +65,10 @@ const ProjectLists = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    if (user?.role) {
-      toast.error(`${user?.role} can only add Projects`);
-    } else {
+  const handleDelete = async (id) => {
+    const project = await getProjectAPI(id);
+
+    const deleteproject = (deleteMutation, id) => {
       const loadingToastId = toast.loading("Deleting...", {
         style: {
           backgroundColor: "#4a90e2",
@@ -98,6 +107,16 @@ const ProjectLists = () => {
           });
           toast.dismiss(loadingToastId);
         });
+    };
+
+    if (user?._id) {
+      if (user?._id !== project?.project?.createdByUser?._id) {
+        toast.error(`${user?.role} can only Delete their own Projects`);
+      } else {
+        deleteproject(deleteMutation, id);
+      }
+    } else {
+      deleteproject(deleteMutation, id);
     }
   };
 

@@ -48,7 +48,7 @@ adminRouter.get(
   getClientById
 );
 adminRouter.delete(
-  "/remove-client",
+  "/remove-client/:id",
   isAuthenticated,
   allowAdminAgentRole,
   removeClient

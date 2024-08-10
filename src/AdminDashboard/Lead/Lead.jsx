@@ -14,7 +14,7 @@ import { Spinner } from "../../common/Spinner";
 import { useSelector } from "react-redux";
 
 export const Lead = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, admin } = useSelector((state) => state.user);
 
   // Fetch property types
   const {
@@ -93,6 +93,9 @@ export const Lead = () => {
       agentName: Yup.string().required("Agent Name is required"),
     }),
     onSubmit: (values) => {
+      values.createdById = user?._id ? user?._id : admin?._id;
+      values.createdByType = user?._id ? "User" : "Admin";
+
       mutation.mutate(values);
     },
   });

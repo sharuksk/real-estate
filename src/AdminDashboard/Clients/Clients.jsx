@@ -1,13 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { addClientsAPI } from "../../APIServices/mastersAPI/clientsAPI";
 import { useFormik } from "formik";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getleadSourceAPI } from "../../APIServices/leadsAPI/leadsAPI";
+import { Spinner } from "../../common/Spinner";
 export const Clients = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, admin } = useSelector((state) => state.user);
+  const naviagete = useNavigate();
 
   const clientMutation = useMutation({
     mutationKey: ["add-client"],
@@ -19,6 +22,20 @@ export const Clients = () => {
       toast.error(`Error: ${error.message}`);
     },
   });
+
+  // Fetch sources
+  const {
+    data: sourcesResponse = {},
+    isLoading: sourcesLoading,
+    error: sourcesError,
+  } = useQuery({
+    queryKey: ["sources"],
+    queryFn: getleadSourceAPI,
+    onSuccess: (data) => console.log("Fetched Sources:", data),
+    onError: (error) => console.error("Error fetching sources:", error),
+  });
+
+  const sources = sourcesResponse.sources || [];
 
   const formik = useFormik({
     initialValues: {
@@ -59,7 +76,20 @@ export const Clients = () => {
     }),
     onSubmit: (values) => {
       // toast.success("Client Created Successfully");
-      clientMutation.mutateAsync(values);
+
+      values.createdById = user?._id ? user?._id : admin?._id;
+      values.createdByType = user?._id ? "User" : "Admin";
+
+      clientMutation
+        .mutateAsync(values)
+        .then(() => {
+          naviagete(
+            `/${
+              user?.role ? user?.role?.toLowerCase() : "admin"
+            }-dashboard/clientlist`
+          );
+        })
+        .catch((err) => console.log(err));
       formik.resetForm();
     },
     // onReset:()=>{
@@ -67,6 +97,11 @@ export const Clients = () => {
     //     console.log('Form reset');
     // }
   });
+
+  if (sourcesLoading) return <Spinner />;
+
+  if (sourcesError)
+    return <div>Error fetching sources: {sourcesError.message}</div>;
 
   return (
     <div className="w-full h-full p-9 bg-gray-300 rounded-xl ">
@@ -113,7 +148,7 @@ export const Clients = () => {
               {
                 id: "pinCode",
                 label: "Pin Code",
-                type: "text",
+                type: "number",
                 placeholder: "Pin Code",
               },
               {
@@ -161,16 +196,44 @@ export const Clients = () => {
               },
             ].map(({ id, label, type, placeholder }) => (
               <div key={id} className="flex items-center gap-6">
-                <label htmlFor={id} className="w-36 font-medium text-gray-700">
-                  {label}
-                </label>
-                <input
-                  id={id}
-                  type={type}
-                  placeholder={placeholder}
-                  {...formik.getFieldProps(id)}
-                  className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
-                />
+                {id === "source" ? (
+                  <>
+                    <label
+                      htmlFor={id}
+                      className="w-36 font-medium text-gray-700"
+                    >
+                      {label}
+                    </label>
+                    <select
+                      className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
+                      {...formik.getFieldProps(id)}
+                    >
+                      <option value="">Select Source</option>
+                      {sources.map((source) => (
+                        <option key={source._id} value={source._id}>
+                          {source.sourcename}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                ) : (
+                  <>
+                    <label
+                      htmlFor={id}
+                      className="w-36 font-medium text-gray-700"
+                    >
+                      {label}
+                    </label>
+                    <input
+                      id={id}
+                      type={type}
+                      placeholder={placeholder}
+                      {...formik.getFieldProps(id)}
+                      className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
+                    />
+                  </>
+                )}
+
                 {formik.touched[id] && formik.errors[id] ? (
                   <div className="text-red-500 text-sm ml-2">
                     {formik.errors[id]}

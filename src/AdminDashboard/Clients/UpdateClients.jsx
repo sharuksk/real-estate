@@ -198,7 +198,11 @@ export const UpdateClient = () => {
             >
               Submit
             </button>
-            <Link to="/admin-dashboard/clientlist">
+            <Link
+              to={`/${
+                user?.role ? user?.role?.toLowerCase() : "admin"
+              }-dashboard/clientlist`}
+            >
               <button
                 type="button"
                 className="px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700 w-36"

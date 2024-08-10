@@ -7,9 +7,10 @@ import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 import { useSelector } from "react-redux";
 
 const AddProjects = () => {
-  const { user } = useSelector((state) => state.user);
+  const { user, admin } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({});
+
   const [imageUploadError, setImageUploadError] = useState(false);
   const navigate = useNavigate();
 
@@ -72,13 +73,14 @@ const AddProjects = () => {
       data = {
         ...data,
         coverImage: downloadURL,
+        createdById: user?._id ? user?._id : admin?._id,
+        createdByType: user?._id ? "User" : "Admin",
       };
     }
 
     projectMutation
       .mutateAsync(data)
       .then((res) => {
-        console.log(res);
         toast.success(res.message, {
           style: {
             backgroundColor: "#34d399",

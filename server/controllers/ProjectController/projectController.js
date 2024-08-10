@@ -3,22 +3,46 @@ const Property = require("../../models/RealEstate/Property");
 
 exports.addProject = async (req, res) => {
   try {
-    const { projectName, location, area, description, coverImage } = req.body;
+    const {
+      projectName,
+      location,
+      area,
+      description,
+      coverImage,
+      createdById,
+      createdByType,
+    } = req.body;
 
-    if (!projectName || !location || !area || !description || !coverImage) {
+    if (
+      !projectName ||
+      !location ||
+      !area ||
+      !description ||
+      !coverImage ||
+      !createdById ||
+      !createdByType
+    ) {
       return res.status(400).json({
         success: false,
         message: "All Fields are mandatory",
       });
     }
 
-    const newProject = await Project.create({
+    let newProjectData = {
       projectName,
+      location,
       area,
       description,
       coverImage,
-      location,
-    });
+    };
+
+    if (createdByType === "User") {
+      newProjectData.createdByUser = createdById;
+    } else if (createdByType === "Admin") {
+      newProjectData.createdByAdmin = createdById;
+    }
+
+    const newProject = await Project.create(newProjectData);
     await newProject.save();
     return res.status(200).json({
       message: "Project Created Successfully",
@@ -97,7 +121,7 @@ exports.deleteProjectById = async (req, res) => {
 exports.getProjectById = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(projectId).populate("createdByUser");
 
     if (!project) {
       return res.status(404).json({

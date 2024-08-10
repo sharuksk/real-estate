@@ -11,6 +11,8 @@ const {
   deletepropertyType,
   listPropertyType,
   getAllAmenities,
+  getAllSource,
+  getAllPropertyType,
 } = require("../../controllers/realEstateController/masterController");
 const {
   createLead,
@@ -25,53 +27,84 @@ const {
   adminMiddleware,
   allowAdminAgentRole,
   allowAnyRole,
+  allowAdminOwnerRole,
 } = require("../../middlewares/roleMiddleware");
 const masterRouter = express.Router();
 //**Amenity  */
-masterRouter.post("/add-amenity", isAuthenticated, adminMiddleware, addAmenity);
+masterRouter.post(
+  "/add-amenity",
+  isAuthenticated,
+  allowAdminOwnerRole,
+  addAmenity
+);
 masterRouter.delete(
   "/delete-amenity/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   deleteAmenity
 );
 masterRouter.get(
   "/list-amenity",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   listAmenity
 );
 masterRouter.get("/getAmenity", isAuthenticated, allowAnyRole, getAllAmenities);
 
 //**Source  */
-masterRouter.post("/add-source", isAuthenticated, adminMiddleware, addSource);
+masterRouter.post(
+  "/add-source",
+  isAuthenticated,
+  allowAdminOwnerRole,
+  addSource
+);
 masterRouter.delete(
   "/delete-source/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   deleteSource
 );
-masterRouter.get("/list-source", isAuthenticated, adminMiddleware, listSource);
+masterRouter.get(
+  "/list-source",
+  isAuthenticated,
+  allowAdminOwnerRole,
+  listSource
+);
+
+masterRouter.get(
+  "/getAllsource/:Id",
+  isAuthenticated,
+  allowAdminOwnerRole,
+  getAllSource
+);
 
 //**Property Type */
 masterRouter.post(
   "/add-propertyType",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   addPropertyType
 );
 masterRouter.delete(
   "/delete-propertyType/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   deletepropertyType
 );
 masterRouter.get(
   "/list-propertyType",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminOwnerRole,
   listPropertyType
 );
+
+masterRouter.get(
+  "/getAllpropertyType/:Id",
+  isAuthenticated,
+  allowAdminOwnerRole,
+  getAllPropertyType
+);
+
 //**Lead */
 masterRouter.post(
   "/add-lead",
@@ -82,7 +115,7 @@ masterRouter.post(
 masterRouter.delete(
   "/delete-lead/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAdminAgentRole,
   deleteLead
 );
 masterRouter.get(
@@ -114,7 +147,7 @@ masterRouter.get(
 masterRouter.get(
   "/list-type",
   isAuthenticated,
-  allowAdminAgentRole,
+  allowAnyRole,
   getLeadPropertyType
 );
 

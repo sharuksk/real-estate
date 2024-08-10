@@ -69,7 +69,7 @@ export const ClientsList = () => {
   if (isLoading) return <Spinner />;
   if (isError) return <div>Error: {error.message}</div>;
 
-  const listClient = data?.listClient || [];
+  const listClient = data?.clients || [];
   const totalPages = data?.totalPages || 1;
   const currentPage = data?.currentPage || 1;
 

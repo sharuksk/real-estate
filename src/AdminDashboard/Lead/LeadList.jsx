@@ -44,11 +44,7 @@ export const LeadList = () => {
   });
 
   const deleteHandler = (id) => {
-    if (user?.role === "Agent") {
-      toast.error(`${user?.role} can only add lead`);
-    } else {
-      leadMutation.mutateAsync(id);
-    }
+    leadMutation.mutateAsync(id);
   };
 
   const viewLeadHandler = async (id) => {
@@ -67,12 +63,12 @@ export const LeadList = () => {
     return <Spinner />;
   }
 
-  const handleEditClick = (id) => {
-    if (user?.role === "Agent") {
-      toast.error(`${user?.role} can only add lead`);
-    } else {
-      navigate(`/admin-dashboard/update-lead/${id}`);
-    }
+  const handleEditClick = async (id) => {
+    navigate(
+      `/${
+        user?.role ? user?.role?.toLowerCase() : "admin"
+      }-dashboard/update-lead/${id}`
+    );
   };
 
   const leads = data?.leads || [];

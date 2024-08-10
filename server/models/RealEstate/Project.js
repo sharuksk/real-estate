@@ -24,6 +24,14 @@ const projectSchema = new mongoose.Schema(
     coverImage: {
       type: String,
     },
+    createdByUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    createdByAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+    },
   },
   {
     timestamps: true,

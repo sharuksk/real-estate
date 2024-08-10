@@ -15,6 +15,7 @@ const {
 const {
   clientMiddleware,
   agentMiddleware,
+  allowAnyRole,
 } = require("../../middlewares/roleMiddleware");
 const usersRouter = express.Router();
 usersRouter.post("/register", register);
@@ -29,7 +30,7 @@ usersRouter.get("/getAgent", getAllAgent);
 usersRouter.post(
   "/update-profile",
   isAuthenticated,
-  agentMiddleware,
+  allowAnyRole,
   updateDetails
 );
 usersRouter.get(

@@ -20,7 +20,11 @@ export const sidebarLinks = [
   {
     id: 2,
     path: "/admin-dashboard/clients",
-    activePath: ["/admin-dashboard/clients"],
+    activePath: [
+      "/admin-dashboard/clients",
+      "/admin-dashboard/clientlist",
+      "/admin-dashboard/update-client/:id",
+    ],
     name: "Clients",
     icon: VscIssueReopened,
   },
@@ -28,7 +32,11 @@ export const sidebarLinks = [
     id: 3,
     name: "Agents",
     path: "/admin-dashboard/agents",
-    activePath: ["/admin-dashboard/agents"],
+    activePath: [
+      "/admin-dashboard/agents",
+      "/admin-dashboard/agentlist",
+      "/admin-dashboard/update-agent/:id",
+    ],
     icon: VscPerson,
   },
   {

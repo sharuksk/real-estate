@@ -4,11 +4,14 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+// import { PersistGate } from "redux-persist/integration/react";
+import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
-import { store } from "./redux/store/store";
+import { store, persistor } from "./redux/store/store";
 
 // Create a new QueryClient instance
+
 const queryClient = new QueryClient();
 
 // Get the root element from the DOM
@@ -19,10 +22,12 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <BrowserRouter>
-          <App />
-          <Toaster />
-        </BrowserRouter>
+        <PersistGate loading={null} persistor={persistor}>
+          <BrowserRouter>
+            <App />
+            <Toaster />
+          </BrowserRouter>
+        </PersistGate>
       </Provider>
     </QueryClientProvider>
   </React.StrictMode>

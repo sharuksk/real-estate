@@ -26,13 +26,13 @@ projectRouter.post("/add-project", isAuthenticated, allowAnyRole, addProject);
 projectRouter.post(
   "/update-project",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   editProject
 );
 projectRouter.delete(
   "/delete-project/:projectId",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   deleteProjectById
 );
 projectRouter.get(
@@ -59,13 +59,13 @@ projectRouter.post("/add-property", isAuthenticated, allowAnyRole, addProperty);
 projectRouter.delete(
   "/delete-property/:propertyId",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   deleteProperty
 );
 projectRouter.post(
   "/update-property/:id",
   isAuthenticated,
-  adminMiddleware,
+  allowAnyRole,
   updateProperty
 );
 projectRouter.get(

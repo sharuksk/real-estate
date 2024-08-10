@@ -12,8 +12,11 @@ import { getleadpropertytTypeAPI } from "../../APIServices/leadsAPI/leadsAPI";
 import { Spinner } from "../../common/Spinner";
 import { getAllAmenityAPI } from "../../APIServices/mastersAPI/amenityAPI";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
+import { useSelector } from "react-redux";
 
 const EditProperties = () => {
+  const { user } = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({});
   const [imageUploadError, setImageUploadError] = useState(false);
   const navigate = useNavigate();
@@ -175,7 +178,11 @@ const EditProperties = () => {
           },
         });
         toast.dismiss(loadingToastId);
-        navigate("/admin-dashboard/properties");
+        navigate(
+          `/${
+            user?.role ? user?.role?.toLowerCase() : "admin"
+          }-dashboard/properties`
+        );
       })
       .catch((err) => {
         console.log(err);

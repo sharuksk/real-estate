@@ -12,9 +12,22 @@ const { cloudinaryConnect } = require("./config/cloudinary");
 const projectRouter = require("./Routes/adminRoutes/projectRoute");
 require("dotenv").config();
 const PORT = process.env.PORT || 8000;
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://real-estate-8z83.onrender.com",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );

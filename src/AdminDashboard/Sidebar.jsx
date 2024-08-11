@@ -8,11 +8,14 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ConfirmationModal from "../common/ConfirmationModel";
+import { useDispatch } from "react-redux";
+import { setAdmin } from "../redux/slices/userSlice";
 
 const Sidebar = () => {
   const [confirmationModal, setConfirmationModal] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Manage sidebar visibility
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const mutation = useMutation({
     mutationFn: logoutAPI,
   });
@@ -20,6 +23,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     const loadToats = toast.loading("Loading");
     mutation.mutate();
+    dispatch(setAdmin({}));
     toast.success("Admin Logged Out Successfully");
     toast.dismiss(loadToats);
     navigate("/");
@@ -34,11 +38,11 @@ const Sidebar = () => {
       >
         <BsList />
       </button>
-      
+
       {/* Sidebar for large screens and conditional rendering for small screens */}
       <nav
         className={`fixed top-0 left-0 h-full bg-slate-300 text-black p-3 overflow-y-auto rounded-3xl m-5 lg:w-64 lg:block lg:static lg:translate-x-0 lg:translate-y-0 transition-transform duration-300 ${
-          isSidebarOpen ? 'translate-x-0' : 'translate-x-[-100%]'
+          isSidebarOpen ? "translate-x-0" : "translate-x-[-100%]"
         }`}
         style={{ zIndex: 40 }}
       >
@@ -48,7 +52,7 @@ const Sidebar = () => {
             Navigations
           </div>
         </div>
-        
+
         <ul className="space-y-2">
           {sidebarLinks.map((link) => (
             <li key={link.id}>
@@ -56,7 +60,7 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-        
+
         {/* Logout button */}
         <button
           onClick={() =>

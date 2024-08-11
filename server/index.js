@@ -16,12 +16,17 @@ const PORT = process.env.PORT || 8000;
 const allowedOrigins = [
   "http://localhost:3000",
   "https://real-estate-8z83.onrender.com",
+  "chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
+      // Allow requests from Chrome extensions or if no origin is specified
+      if (!origin || origin.startsWith("chrome-extension://")) {
+        return callback(null, true);
+      }
+
       if (allowedOrigins.indexOf(origin) === -1) {
         const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
         return callback(new Error(msg), false);

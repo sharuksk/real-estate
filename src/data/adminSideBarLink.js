@@ -13,8 +13,8 @@ export const sidebarLinks = [
   {
     id: 1,
     name: "Dashboard",
-    path: "/dashboard",
-    activePath: ["/dashboard"],
+    path: "/admin-dashboard",
+    activePath: ["/admin-dashboard"],
     icon: VscDashboard,
   },
   {

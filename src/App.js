@@ -38,6 +38,7 @@ import AgentDash from "./AgentsDashboard/Dashboard/index";
 import AgentDashboard from "./AgentsDashboard/AgentDashboard";
 import OwnerDashboard from "./OwnerDashboard/OwnerDashboard";
 import OwnerDash from "./OwnerDashboard/Dashboard/index";
+import Dashboard from "./AdminDashboard/Dashboard";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -99,6 +100,14 @@ function App() {
           </AuthRoute>
         }
       >
+        <Route
+          path=""
+          element={
+            <AuthRoute adminOnly>
+              <Dashboard />
+            </AuthRoute>
+          }
+        />
         <Route
           path="clients"
           element={

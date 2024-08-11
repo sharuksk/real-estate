@@ -9,8 +9,8 @@ export const sidebarLinks = [
   {
     id: 1,
     name: "Dashboard",
-    path: "/owner-dashboard/",
-    activePath: ["/owner-dashboard/"],
+    path: "/owner-dashboard",
+    activePath: ["/owner-dashboard"],
     icon: VscDashboard,
   },
   {

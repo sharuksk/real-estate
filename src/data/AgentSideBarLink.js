@@ -10,8 +10,8 @@ export const sidebarLinks = [
   {
     id: 1,
     name: "Dashboard",
-    path: "/agent-dashboard/",
-    activePath: ["/agent-dashboard/"],
+    path: "/agent-dashboard",
+    activePath: ["/agent-dashboard"],
     icon: VscDashboard,
   },
   {

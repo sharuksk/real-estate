@@ -4,9 +4,9 @@ import "chart.js/auto";
 import { TiSpanner } from "react-icons/ti";
 import { IoCartOutline, IoRocketOutline } from "react-icons/io5";
 import { PiFolderSimpleUserBold } from "react-icons/pi";
-import MyAreaChart from "../../common/MyAreaChart";
+import MyAreaChart from "../common/MyAreaChart";
 
-const index = () => {
+const Dashboard = () => {
   const barData = {
     labels: ["", "", "", "", "", ""],
     datasets: [
@@ -143,4 +143,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Dashboard;

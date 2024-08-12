@@ -1,6 +1,5 @@
 import {
   VscDashboard,
-  VscAccount,
   VscPerson,
   VscProject,
   VscHome,

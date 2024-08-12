@@ -8,6 +8,9 @@ import {
 } from "../../APIServices/mastersAPI/clientsAPI";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { getleadSourceAPI } from "../../APIServices/leadsAPI/leadsAPI";
+import { Spinner } from "../../common/Spinner";
 const validationSchema = Yup.object({
   name: Yup.string().notRequired(),
   contact: Yup.string().notRequired(),
@@ -47,6 +50,20 @@ export const UpdateClient = () => {
     source: "",
   });
 
+  // Fetch sources
+  const {
+    data: sourcesResponse = {},
+    isLoading: sourcesLoading,
+    error: sourcesError,
+  } = useQuery({
+    queryKey: ["sources"],
+    queryFn: getleadSourceAPI,
+    onSuccess: (data) => console.log("Fetched Sources:", data),
+    onError: (error) => console.error("Error fetching sources:", error),
+  });
+
+  const sources = sourcesResponse.sources || [];
+
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -69,8 +86,21 @@ export const UpdateClient = () => {
     const fetchClientData = async () => {
       try {
         const client = await getClientById(id);
-        setInitialValues(client);
-        formik.setValues(client);
+        const formattedDOB = client.dob
+          ? new Date(client.dob).toISOString().split("T")[0]
+          : "";
+
+        setInitialValues({
+          ...client,
+          dob: formattedDOB,
+          source: client?.source?._id,
+        });
+
+        formik.setValues({
+          ...client,
+          dob: formattedDOB,
+          source: client?.source?._id,
+        });
       } catch (error) {
         toast.error(`Error: ${error.message}`);
       }
@@ -78,6 +108,11 @@ export const UpdateClient = () => {
 
     fetchClientData();
   }, []);
+
+  if (sourcesLoading) return <Spinner />;
+
+  if (sourcesError)
+    return <div>Error fetching sources: {sourcesError.message}</div>;
 
   return (
     <div className="w-full h-full p-9 bg-gray-300 rounded-xl">
@@ -172,16 +207,44 @@ export const UpdateClient = () => {
               },
             ].map(({ id, label, type, placeholder }) => (
               <div key={id} className="flex items-center gap-6">
-                <label htmlFor={id} className="w-36 font-medium text-gray-700">
-                  {label}
-                </label>
-                <input
-                  id={id}
-                  type={type}
-                  placeholder={placeholder}
-                  {...formik.getFieldProps(id)}
-                  className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
-                />
+                {id === "source" ? (
+                  <>
+                    <label
+                      htmlFor={id}
+                      className="w-36 font-medium text-gray-700"
+                    >
+                      {label}
+                    </label>
+                    <select
+                      className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
+                      {...formik.getFieldProps(id)}
+                    >
+                      <option value="">Select Source</option>
+                      {sources.map((source) => (
+                        <option key={source._id} value={source._id}>
+                          {source.sourcename}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                ) : (
+                  <>
+                    <label
+                      htmlFor={id}
+                      className="w-36 font-medium text-gray-700"
+                    >
+                      {label}
+                    </label>
+                    <input
+                      id={id}
+                      type={type}
+                      placeholder={placeholder}
+                      {...formik.getFieldProps(id)}
+                      className="p-2 h-9 border border-gray-300 rounded-xl flex-1"
+                    />
+                  </>
+                )}
+
                 {formik.touched[id] && formik.errors[id] ? (
                   <div className="text-red-500 text-sm ml-2">
                     {formik.errors[id]}

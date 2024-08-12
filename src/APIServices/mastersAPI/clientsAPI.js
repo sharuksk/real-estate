@@ -48,7 +48,7 @@ export const getClientById = async (id) => {
 };
 export const updateClientAPI = async (id, updatedData) => {
   try {
-    const response = await axios.put(
+    const response = await axios.post(
       `${BASE_URL}/admin/update-client/${id}`,
       updatedData,
       {

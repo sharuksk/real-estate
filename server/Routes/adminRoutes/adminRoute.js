@@ -29,8 +29,8 @@ adminRouter.post(
   allowAdminAgentRole,
   createClient
 );
-adminRouter.put(
-  "/update-client",
+adminRouter.post(
+  "/update-client/:id",
   isAuthenticated,
   allowAdminAgentRole,
   updateClient

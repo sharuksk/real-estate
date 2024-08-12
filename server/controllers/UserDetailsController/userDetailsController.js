@@ -186,6 +186,7 @@ exports.createAgent = async (req, res) => {
       commissionInfo,
       pinCode,
       projects,
+      licenseInfo,
     } = req.body;
 
     const projectsExists = await Project.findById(projects);

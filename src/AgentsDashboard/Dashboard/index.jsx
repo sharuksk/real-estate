@@ -1,146 +1,124 @@
 import React from "react";
-import { Bar } from "react-chartjs-2";
-import "chart.js/auto";
-import { TiSpanner } from "react-icons/ti";
-import { IoCartOutline, IoRocketOutline } from "react-icons/io5";
-import { PiFolderSimpleUserBold } from "react-icons/pi";
-import MyAreaChart from "../../common/MyAreaChart";
+import image1 from "../../assests/image1.png";
+import image2 from "../../assests/image2.png";
+import image3 from "../../assests/image3.png";
+import image4 from "../../assests/image4.png";
+import { useSelector } from "react-redux";
+import DashboardChart from "../../common/DashboardChart";
 
-const index = () => {
-  const barData = {
-    labels: ["", "", "", "", "", ""],
-    datasets: [
-      {
-        label: "Active Users",
-        data: [100, 200, 300, 400, 500, 600],
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+const data = [
+  { name: "Jan", value: 50 },
+  { name: "Feb", value: 150 },
+  { name: "Mar", value: 100 },
+  { name: "Apr", value: 120 },
+  { name: "May", value: 80 },
+  { name: "Jun", value: 200 },
+  { name: "Jul", value: 140 },
+];
 
-  const barOptions = {
-    scales: {
-      x: {
-        display: false,
-      },
-      y: {
-        display: true,
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    maintainAspectRatio: true,
-  };
+const stats = [
+  { label: "Total Properties", value: "1,200" },
+  { label: "Total Projects", value: "300" },
+  { label: "Active Projects", value: "250" },
+  { label: "Total Clients", value: "500" },
+  { label: "Total Agents", value: "100" },
+];
+
+const recentActivities = [
+  {
+    image: image1,
+    action: "Invite to join the team",
+    time: "2 days ago",
+    status: "Resend",
+  },
+  {
+    image: image2,
+    action: "Mark as complete",
+    time: "3 days ago",
+    status: "Complete",
+  },
+  {
+    image: image3,
+    action: "Update project plan",
+    time: "4 days ago",
+    status: "View",
+  },
+  {
+    image: image4,
+    action: "Invite to join the team",
+    time: "1 week ago",
+    status: "Resend",
+  },
+];
+
+const getCurrentGreeting = () => {
+  const hours = new Date().getHours();
+  if (hours < 12) return "Good Morning";
+  if (hours < 18) return "Good Afternoon";
+  return "Good Evening";
+};
+
+const Dashboard = () => {
+  const { user, admin } = useSelector((state) => state.user);
+  const greeting = getCurrentGreeting();
 
   return (
-    <div className="p-3 max-w-[1500px]">
-      <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="bg-white rounded-lg shadow p-5 flex-1 h-full w-full">
-          <div
-            className="flex rounded-xl text-white"
-            style={{
-              backgroundColor: "#292f50",
-              maxHeight: "400px",
-              color: "white",
-            }}
-          >
-            <Bar data={barData} options={barOptions} />
+    <div className="p-4 md:p-8 border border-1 min-h-screen">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8">
+        <h1 className="text-xl md:text-4xl font-bold  mb-4 md:mb-0">
+          {greeting}, {user?.name ? user?.name : admin?.name}
+        </h1>
+        <button className="px-4 py-2 bg-[#fcfaf7] text-[#292f50] rounded-lg shadow-md">
+          Edit
+        </button>
+      </header>
+
+      <section className="grid grid-cols-2 gap-4 md:gap-6 md:grid-cols-3 lg:grid-cols-5 mb-6 md:mb-8">
+        {stats.map((stat, index) => (
+          <div key={index} className="bg-[#fcfaf7] p-4 rounded-lg shadow-md">
+            <p className="text-sm md:text-lg font-medium">{stat.label}</p>
+            <h3 className="text-xl md:text-2xl font-bold ">{stat.value}</h3>
           </div>
-          <div className="mt-4">
-            <p className="text-sm font-bold">Active Users</p>
-            <p>
-              <span className="text-green-500">(+23) </span>than last week
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mt-10 text-xs">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#4fd1c4] p-2 rounded-xl">
-                  <PiFolderSimpleUserBold className="text-2xl text-white" />
+        ))}
+      </section>
+
+      <section className="bg-[#fcfaf7] p-4 md:p-6 rounded-lg shadow-md mb-6 md:mb-8">
+        <h2 className="text-md md:text-lg font-semibold mb-4">
+          Project Performance
+        </h2>
+        <DashboardChart data={data} />
+      </section>
+
+      <section className="bg-[#fcfaf7] p-4 md:p-6 rounded-lg shadow-md">
+        <h2 className="text-lg md:text-xl font-bold mb-4">Recent Activity</h2>
+        <ul>
+          {recentActivities.map((activity, index) => (
+            <li
+              key={index}
+              className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4"
+            >
+              <div className="flex items-start md:items-center mb-4 md:mb-0">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-full mr-4">
+                  <img
+                    src={activity.image}
+                    alt=""
+                    className="w-full h-full rounded-full object-cover"
+                  />
                 </div>
-                <p>Users</p>
-              </div>
-              <p className="font-bold">32,984</p>
-              <div className="h-[6px] w-[100px] bg-gray-200 rounded-full">
-                <div className="h-[6px] w-[80px] bg-[#4fd1c4]"></div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#4fd1c4] p-2 rounded-xl">
-                  <IoRocketOutline className="text-2xl text-white" />
+                <div>
+                  <p className="text-sm font-medium">{activity.action}</p>
+                  <p className="text-xs text-[#96784f]">{activity.time}</p>
                 </div>
-                <p>Clicks</p>
               </div>
-              <p className="font-bold">2,42m</p>
-              <div className="h-[6px] w-[100px] bg-gray-200 rounded-full">
-                <div className="h-[6px] w-[90px] bg-[#4fd1c4]"></div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#4fd1c4] p-2 rounded-xl">
-                  <IoCartOutline className="text-2xl text-white" />
-                </div>
-                <p>Sales</p>
-              </div>
-              <p className="font-bold">2,400$</p>
-              <div className="h-[6px] w-[100px] bg-gray-200 rounded-full">
-                <div className="h-[6px] w-[40px] bg-[#4fd1c4]"></div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-[#4fd1c4] p-2 rounded-xl">
-                  <TiSpanner className="text-2xl text-white" />
-                </div>
-                <p>Items</p>
-              </div>
-              <p className="font-bold">320</p>
-              <div className="h-[6px] w-[100px] bg-gray-200 rounded-full">
-                <div className="h-[6px] w-[50px] bg-[#4fd1c4]"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow p-5 flex-1 w-full h-full">
-          <div className="mb-5">
-            <p className="text-base font-bold">Sales Overview</p>
-            <p>
-              <span className="text-green-500">(+5) more </span>in 2021
-            </p>
-          </div>
-          <MyAreaChart />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10">
-        <div className="bg-gray-300 rounded-lg shadow p-5 text-center flex gap-4 items-center">
-          <p className="text-xl">Today Pending Calls</p>
-          <div className="bg-white h-[50px] w-[50px] rounded-full p-1">
-            <p className="text-3xl font-bold">2</p>
-          </div>
-        </div>
-        <div className="bg-gray-300 rounded-lg shadow p-5 text-center flex gap-4 items-center">
-          <p className="text-xl">Old Pending Calls</p>
-          <div className="bg-white h-[50px] w-[50px] rounded-full p-1">
-            <p className="text-3xl font-bold">0</p>
-          </div>
-        </div>
-        <div className="bg-gray-300 rounded-lg shadow p-5 text-center flex gap-4 items-center">
-          <p className="text-xl">Un-Attempted Calls</p>
-          <div className="bg-white h-[50px] w-[50px] rounded-full p-1">
-            <p className="text-3xl font-bold">4</p>
-          </div>
-        </div>
-      </div>
+              <button className="px-4 py-2 mt-2 md:mt-0 rounded-lg shadow-md w-full md:w-auto bg-[#f5efe7] font-medium">
+                {activity.status}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 };
 
-export default index;
+export default Dashboard;

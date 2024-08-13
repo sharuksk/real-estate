@@ -1,5 +1,5 @@
 import { FaTrashCan } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   getProjectAPI,
@@ -227,12 +227,15 @@ const EditProjects = () => {
             <button className="flex py-2 bg-[#58ac3b] rounded-full px-12 text-white">
               Submit
             </button>
-            <button
-              type="reset"
-              className="flex py-2 bg-[#686868] rounded-full px-12 text-white"
+            <Link
+              to={`/${
+                user?.role ? user?.role?.toLowerCase() : "admin"
+              }-dashboard/projects`}
             >
-              Reset
-            </button>
+              <button className="flex py-2 bg-[#686868] rounded-full px-12 text-white">
+                Cancel
+              </button>
+            </Link>
           </div>
         </form>
       </div>

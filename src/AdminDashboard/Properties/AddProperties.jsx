@@ -10,6 +10,7 @@ import { AllAgentAPI } from "../../APIServices/usersAPI/usersAPI";
 import { Spinner } from "../../common/Spinner";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 import { useSelector } from "react-redux";
+import Select from "react-select";
 
 const AddProperties = () => {
   const { user, admin } = useSelector((state) => state.user);
@@ -44,8 +45,6 @@ const AddProperties = () => {
     onError: (error) => console.error("Error fetching agents:", error),
   });
 
-  console.log(AgentData);
-
   // Fetch property types
   const {
     data: propertyTypesData,
@@ -73,6 +72,27 @@ const AddProperties = () => {
     onError: (error) => console.error("Error fetching amenties types:", error),
   });
 
+  const Amenties = AmentiesData?.amenities || [];
+
+  const amentiesOptions = Amenties.map((Amenty) => ({
+    value: Amenty._id,
+    label: Amenty.amenityname,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      padding: "0.5rem",
+      borderRadius: "0.75rem",
+      borderColor: "#d1d5db",
+      boxShadow: "none",
+    }),
+    container: (provided) => ({
+      ...provided,
+      flex: 1,
+    }),
+  };
+
   const propertiesMutation = useMutation({
     mutationKey: ["add-property"],
     mutationFn: AddPropertiesAPI,
@@ -84,12 +104,6 @@ const AddProperties = () => {
       setFormData({
         ...formData,
         [id]: files,
-      });
-    } else if (selectedOptions && id === "amenities") {
-      const valuesArray = Array.from(selectedOptions, (option) => option.value);
-      setFormData({
-        ...formData,
-        [id]: valuesArray,
       });
     } else if (id === "propertyAge" || id === "price") {
       setFormData({
@@ -222,18 +236,18 @@ const AddProperties = () => {
           </Link>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row w-full gap-4 items-start md:items-center">
+          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-[72px] items-start md:items-center">
             <label className="font-semibold text-lg">Property Name</label>
             <input
               type="text"
-              className="flex w-[62.5%] rounded-3xl p-2 focus:outline-none"
+              className="flex w-[51%] md:w-[72.5%] rounded-3xl p-2 focus:outline-none"
               placeholder="Property Name"
               id="propertyName"
               onChange={handleChange}
             />
           </div>
           <div className="flex flex-col md:flex-row w-full gap-1 md:gap-36">
-            <div className="space-y-5">
+            <div className=" flex-1 space-y-5">
               <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
                 <label className="flex-1 font-semibold text-lg">
                   Select Project
@@ -292,22 +306,24 @@ const AddProperties = () => {
               </div>
               <div className="flex flex-col md:flex-row w-full gap-1 md:gap-0 items-start md:items-center">
                 <label className="flex-1 font-semibold text-lg">Amenties</label>
-                <select
-                  multiple
+                <Select
                   id="amenities"
-                  onChange={handleChange}
-                  className="flex-1 w-1/2 rounded-3xl p-2"
-                >
-                  <option aria-disabled>Amenties</option>
-                  {AmentiesData?.amenities?.map((amenty) => (
-                    <option key={amenty._id} value={amenty._id}>
-                      {amenty.amenityname}
-                    </option>
-                  ))}
-                </select>
+                  styles={customStyles}
+                  options={amentiesOptions}
+                  isMulti={true}
+                  onChange={(selectedOptions) => {
+                    const valuesArray = selectedOptions.map(
+                      (option) => option.value
+                    );
+                    setFormData({
+                      ...formData,
+                      amenities: valuesArray,
+                    });
+                  }}
+                />
               </div>
             </div>
-            <div className="space-y-5">
+            <div className="flex-1 space-y-5">
               <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
                 <label className="flex-1 font-semibold text-lg">
                   Property Type
@@ -380,7 +396,7 @@ const AddProperties = () => {
               )}
             </div>
           </div>
-          <div className="flex flex-col md:flex-row w-full gap-2 md:gap-0">
+          <div className="flex flex-col md:flex-row w-full gap-2 md:gap-16">
             <label className="font-semibold text-lg w-full md:w-[14%]">
               Property Description
             </label>

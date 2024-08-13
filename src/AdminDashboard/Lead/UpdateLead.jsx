@@ -57,14 +57,15 @@ export const UpdateLead = () => {
       try {
         const lead = await getLeadById(id);
         const leadData = lead.lead || {};
+
         formik.setValues({
           leadName: leadData.leadName || "",
           contact: leadData.contact || "",
           location: leadData?.location || "",
           email: leadData?.email || "",
-          propertyType: leadData?.propertyType?.propertyTypeName || "",
-          source: leadData?.source?.sourcename || "",
-          agentName: leadData?.agentName?.name || "",
+          propertyType: leadData?.propertyType?._id || "",
+          source: leadData?.source?._id || "",
+          agentName: leadData?.agentName?._id || "",
         });
       } catch (error) {
         toast.error(`Error: ${error.message}`);

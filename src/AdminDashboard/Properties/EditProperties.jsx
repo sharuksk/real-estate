@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AllProjectsAPI } from "../../APIServices/projectAPI/projectAPI";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   EditPropertyAPI,
@@ -13,6 +13,7 @@ import { Spinner } from "../../common/Spinner";
 import { getAllAmenityAPI } from "../../APIServices/mastersAPI/amenityAPI";
 import { handleFileUpload } from "../../hooks/handleFileUploadFirebase";
 import { useSelector } from "react-redux";
+import Select from "react-select";
 
 const EditProperties = () => {
   const { user } = useSelector((state) => state.user);
@@ -99,6 +100,27 @@ const EditProperties = () => {
     onSuccess: (data) => console.log("Fetched amenties Types:", data),
     onError: (error) => console.error("Error fetching amenties types:", error),
   });
+
+  const Amenties = AmentiesData?.amenities || [];
+
+  const amentiesOptions = Amenties.map((Amenty) => ({
+    value: Amenty._id,
+    label: Amenty.amenityname,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      padding: "0.5rem",
+      borderRadius: "0.75rem",
+      borderColor: "#d1d5db",
+      boxShadow: "none",
+    }),
+    container: (provided) => ({
+      ...provided,
+      flex: 1,
+    }),
+  };
 
   const updatePropertyMutation = useMutation({
     mutationKey: ["update-project"],
@@ -227,11 +249,11 @@ const EditProperties = () => {
           <div>Edit Properties</div>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row w-full gap-3 items-start md:items-center">
+          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-[72px] items-start md:items-center">
             <label className="font-semibold text-lg">Property Name</label>
             <input
               type="text"
-              className="flex w-[65%] rounded-3xl p-2 focus:outline-none"
+              className="flex w-[51%] md:w-[72.5%] rounded-3xl p-2 focus:outline-none"
               placeholder="Property Name"
               id="propertyName"
               value={formData?.propertyName}
@@ -239,14 +261,16 @@ const EditProperties = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row w-full gap-1 md:gap-36">
-            <div className="space-y-5">
-              <div className="flex flex-col md:flex-row w-full gap-7 items-start md:items-center">
-                <label className="font-semibold text-lg">Select Project</label>
+            <div className="flex-1 space-y-5">
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">
+                  Select Project
+                </label>
                 <select
                   id="project"
                   value={formData?.project}
                   onChange={handleChange}
-                  className="flex w-1/2 rounded-3xl p-2"
+                  className="flex flex-1 w-1/2 rounded-3xl p-2"
                 >
                   <option aria-disabled>Select Project</option>
                   {ProjectData?.projects?.map((project) => (
@@ -256,24 +280,28 @@ const EditProperties = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-9 items-start md:items-center">
-                <label className="font-semibold text-lg">Project Area</label>
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">
+                  Project Area
+                </label>
                 <input
                   type="text"
-                  className=" w-1/2 rounded-3xl p-2 focus:outline-none"
+                  className="flex-1 w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Project Area (Sq.Ft)"
                   id="projectArea"
                   value={formData?.projectArea}
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-1 items-start md:items-center">
-                <label className="font-semibold text-lg">Reference Agent</label>
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">
+                  Reference Agent
+                </label>
                 <select
                   id="referenceAgent"
                   value={formData?.referenceAgent}
                   onChange={handleChange}
-                  className="flex w-1/2 rounded-3xl p-2"
+                  className="flex flex-1 w-1/2 rounded-3xl p-2"
                 >
                   <option aria-disabled>Reference Agent</option>
                   {AgentData?.map((agent) => (
@@ -283,43 +311,50 @@ const EditProperties = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-1 md:gap-24 items-start md:items-center">
-                <label className="font-semibold text-lg">Price</label>
+              <div className="flex flex-col md:flex-row w-full gap-1 md:gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">Price</label>
                 <input
                   type="text"
-                  className=" w-1/2 rounded-3xl p-2 focus:outline-none"
+                  className="flex-1 w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Price in USD"
                   id="price"
                   value={formData?.price}
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-1 md:gap-14 items-start md:items-center">
-                <label className="font-semibold text-lg">Amenties</label>
-                <select
-                  multiple
+              <div className="flex flex-col md:flex-row w-full gap-1 md:gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">Amenties</label>
+
+                <Select
                   id="amenities"
-                  value={formData?.amenities}
-                  onChange={handleChange}
-                  className="flex w-1/2 rounded-3xl p-2"
-                >
-                  <option aria-disabled>Amenties</option>
-                  {AmentiesData?.amenities?.map((amenty) => (
-                    <option key={amenty._id} value={amenty._id}>
-                      {amenty.amenityname}
-                    </option>
-                  ))}
-                </select>
+                  styles={customStyles}
+                  options={amentiesOptions}
+                  isMulti={true}
+                  value={formData?.amenities?.map((id) =>
+                    amentiesOptions.find((option) => option.value === id)
+                  )}
+                  onChange={(selectedOptions) => {
+                    const valuesArray = selectedOptions.map(
+                      (option) => option.value
+                    );
+                    setFormData({
+                      ...formData,
+                      amenities: valuesArray,
+                    });
+                  }}
+                />
               </div>
             </div>
-            <div className="space-y-5">
-              <div className="flex flex-col md:flex-row w-full gap-5 items-start md:items-center">
-                <label className="font-semibold text-lg">Property Type</label>
+            <div className="flex-1 space-y-5">
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">
+                  Property Type
+                </label>
                 <select
                   id="propertyType"
                   value={formData?.propertyType}
                   onChange={handleChange}
-                  className="flex w-1/2 rounded-3xl p-2"
+                  className="flex flex-1 w-1/2 rounded-3xl p-2"
                 >
                   <option aria-disabled> Property Type</option>
                   {propertyTypesData?.propertyTypes?.map((property) => (
@@ -329,22 +364,24 @@ const EditProperties = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-7 items-start md:items-center">
-                <label className="font-semibold text-lg">Property Age</label>
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">
+                  Property Age
+                </label>
                 <input
                   type="text"
-                  className=" w-1/2 rounded-3xl p-2 focus:outline-none"
+                  className="flex-1 w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" Property Age"
                   id="propertyAge"
                   value={formData?.propertyAge}
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-[32%] items-start md:items-center">
-                <label className="font-semibold text-lg">City</label>
+              <div className="flex flex-col md:flex-row w-full gap-0 items-start md:items-center">
+                <label className="flex-1 font-semibold text-lg">City</label>
                 <input
                   type="text"
-                  className=" w-1/2 rounded-3xl p-2 focus:outline-none"
+                  className="flex-1 w-1/2 rounded-3xl p-2 focus:outline-none"
                   placeholder=" City"
                   id="city"
                   value={formData?.city}
@@ -352,23 +389,25 @@ const EditProperties = () => {
                 />
               </div>
               <div className="flex flex-col md:flex-row w-full gap-1 items-start md:items-center">
-                <label className="font-semibold text-lg">
+                <label className="flex-1 font-semibold text-lg">
                   Loan Availability
                 </label>
                 <select
                   id="loan"
                   value={formData?.loan}
                   onChange={handleChange}
-                  className="flex w-1/2 rounded-3xl p-2"
+                  className="flex flex-1 w-1/2 rounded-3xl p-2"
                 >
                   <option aria-disabled> Loan Availability</option>
                   <option value="true">Yes</option>
                   <option value="false">No</option>
                 </select>
               </div>
-              <div className="flex flex-col md:flex-row w-full gap-2 md:gap-20">
-                <label className="font-semibold text-lg mt-2">Images</label>
-                <label className=" bg-white w-1/2 text-[#808080] p-2 rounded-[300px] text-center cursor-pointer">
+              <div className="flex flex-col md:flex-row w-full gap-2 md:gap-0">
+                <label className="flex-1 font-semibold text-lg mt-2">
+                  Images
+                </label>
+                <label className="flex-1 bg-white w-1/2 text-[#808080] p-2 rounded-[300px] text-center cursor-pointer">
                   <input
                     type="file"
                     className="w-full h-full hidden"
@@ -383,7 +422,7 @@ const EditProperties = () => {
               )}
             </div>
           </div>
-          <div className="flex flex-col md:flex-row w-full gap-2 md:gap-0">
+          <div className="flex flex-col md:flex-row w-full gap-2 md:gap-16">
             <label className="font-semibold text-lg w-full md:w-[14%]">
               Property Description
             </label>
@@ -400,12 +439,15 @@ const EditProperties = () => {
             <button className="flex py-2 bg-[#58ac3b] rounded-full px-12 text-white">
               Submit
             </button>
-            <button
-              type="reset"
-              className="flex py-2 bg-[#686868] rounded-full px-12 text-white"
+            <Link
+              to={`/${
+                user?.role ? user?.role?.toLowerCase() : "admin"
+              }-dashboard/properties`}
             >
-              Reset
-            </button>
+              <button className="flex py-2 bg-[#686868] rounded-full px-12 text-white">
+                Cancel
+              </button>
+            </Link>
           </div>
         </form>
       </div>

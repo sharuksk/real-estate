@@ -15,7 +15,7 @@ export const AgentsList = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [selectedAgent, setSelectedAgent] = useState(null);
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  // const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const limit = 3;
@@ -26,7 +26,6 @@ export const AgentsList = () => {
     keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
-  console.log(data);
 
   const agentMutation = useMutation({
     mutationKey: ["delete-agent"],
@@ -47,7 +46,7 @@ export const AgentsList = () => {
   const viewAgentHandler = async (id) => {
     try {
       const agent = await getAgentById(id);
-      setSelectedAgent(agent);
+      setSelectedAgent(agent.agent);
       setModalOpen(true);
       toast.success("Agent View Opened");
     } catch (error) {

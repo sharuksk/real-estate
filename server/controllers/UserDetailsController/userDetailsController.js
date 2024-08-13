@@ -230,8 +230,10 @@ exports.getAgent = async (req, res) => {
 };
 exports.getAgenttById = async (req, res) => {
   try {
-    const { id } = req.params.id;
-    const agent = await agentSchema.findById(id).populate("Project");
+    const { id } = req.params;
+
+    const agent = await agentSchema.findById(id).populate("projects");
+
     if (!agent) return res.status(404).json({ message: "Agent not found" });
     return res.status(200).json({
       message: "Client Fetched Sucessfully",
@@ -243,8 +245,10 @@ exports.getAgenttById = async (req, res) => {
 };
 exports.removeAgent = async (req, res) => {
   try {
-    const { id } = req.params.id;
+    const { id } = req.params;
+
     const agent = await agentSchema.findByIdAndDelete(id);
+
     if (!agent) return res.status(404).json({ message: "Agent not found" });
     return res.status(200).json({
       message: "Client Removed Successfully",
@@ -256,6 +260,7 @@ exports.removeAgent = async (req, res) => {
 exports.updateAgent = async (req, res) => {
   try {
     const { id } = req.params;
+
     const {
       name,
       contact,
@@ -263,24 +268,26 @@ exports.updateAgent = async (req, res) => {
       qatarId,
       address,
       state,
-      occupation,
-      designation,
-      organization,
       dob,
-      preferredLanguage,
       city,
       pinCode,
+      licenseInfo,
       commissionInfo,
       projects,
     } = req.body;
-    if (projects) {
-      const projectExists = await Project.findById(projects);
-      if (!projectExists)
-        return res.status(400).json({ message: "Invalid project ID" });
+    if (projects && Array.isArray(projects)) {
+      for (const projectId of projects) {
+        const projectExists = await Project.findById(projectId);
+        if (!projectExists) {
+          return res
+            .status(400)
+            .json({ message: `Invalid project ID: ${projectId}` });
+        }
+      }
     }
 
     // Update the agent
-    const updatedAgent = await agent.findByIdAndUpdate(
+    const updatedAgent = await agentSchema.findByIdAndUpdate(
       id,
       {
         name,

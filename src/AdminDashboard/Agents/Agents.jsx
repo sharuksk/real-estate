@@ -10,7 +10,7 @@ import Select from "react-select";
 import { Spinner } from "../../common/Spinner";
 
 export const Agents = () => {
-  // Fetch sources
+  // Fetch projects
   const {
     data: projectData = {},
     isLoading: projectLoading,
@@ -23,7 +23,6 @@ export const Agents = () => {
   });
 
   const projects = projectData.projects || [];
-  console.log(projects);
 
   const projectOptions = projects.map((project) => ({
     value: project._id,

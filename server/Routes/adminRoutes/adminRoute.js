@@ -55,11 +55,16 @@ adminRouter.delete(
 );
 //Agent
 adminRouter.post("/add-agent", isAuthenticated, adminMiddleware, createAgent);
-adminRouter.put("/update-agent", isAuthenticated, adminMiddleware, updateAgent);
+adminRouter.post(
+  "/update-agent/:id",
+  isAuthenticated,
+  adminMiddleware,
+  updateAgent
+);
 adminRouter.get("/list-agents", isAuthenticated, allowAdminAgentRole, getAgent);
 adminRouter.get("/agent/:id", isAuthenticated, adminMiddleware, getAgenttById);
 adminRouter.delete(
-  "/remove-agent",
+  "/remove-agent/:id",
   isAuthenticated,
   adminMiddleware,
   removeAgent
